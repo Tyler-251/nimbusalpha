@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-nimbusalpha-dev-7629c-authRole",
+      "UnauthRoleArn": "arn:aws:iam::617057808357:role/amplify-nimbusalpha-dev-7629c-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::617057808357:role/amplify-nimbusalpha-dev-7629c-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-nimbusalpha-dev-7629c-deployment",
+      "UnauthRoleName": "amplify-nimbusalpha-dev-7629c-unauthRole",
+      "StackName": "amplify-nimbusalpha-dev-7629c",
+      "StackId": "arn:aws:cloudformation:us-east-1:617057808357:stack/amplify-nimbusalpha-dev-7629c/c443eb70-7acb-11ef-83d6-0affcff29dbf",
+      "AmplifyAppId": "d2ifcvvy5cqxe1"
+    }
+  }
+}
