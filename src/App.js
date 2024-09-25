@@ -1,21 +1,28 @@
 import { Amplify } from 'aws-amplify';
-import { getCurrentUser, signOut } from '@aws-amplify/auth';
+import { signOut, fetchUserAttributes } from '@aws-amplify/auth';
 import awsconfig from './aws-exports.js';
 import { withAuthenticator } from '@aws-amplify/ui-react';
 import React, {useState, useEffect} from 'react';
 import '@aws-amplify/ui-react/styles.css';
 import logo from './logo.svg';
 import './App.css';
+import EventBox from './EventBox.js';
+
+import { generateClient } from 'aws-amplify/api';
+import {createEvent} from './graphql/mutations.js';
+
+
+
 
 Amplify.configure(awsconfig);
 
 function App() {
-  const [userInfo, setUserInfo] = useState({ username: '', userId: '', signInDetails: {} });
+  const [userInfo, setUserInfo] = useState('');
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const user = await getCurrentUser();
+        const user = await fetchUserAttributes();
         setUserInfo(user);
       } catch (error) {
         console.error('Error fetching user:', error);
@@ -24,27 +31,41 @@ function App() {
     fetchUser();
   }, []);
 
+
   async function handleSignOut() {
     await signOut();
   }
 
-  const {myUser} = userInfo;
+  async function addEvent() {
+    const client = generateClient();
+
+    const result = await client.graphql({
+      query: createEvent,
+      variables: {
+        input: {
+          id: 'someId',
+          date: '4-4-2004',
+          usesTime: true,
+          time: "14:00:36"
+        }
+      }
+    });
+  }
+
+  const myUser = userInfo;
+  console.log(myUser);
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload. {}
+          Welcome, {myUser.name}!
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
         <button type='button' onClick={handleSignOut}>Sign Out</button>
+        <button type='button' onClick={addEvent}>Create Event</button>
+        <EventBox title="titlebox" date="yo mama o clock"/>
+        <EventBox title="titlebox" date="yo mama o clock"/>
+        <EventBox title="titlebox" date="yo mama o clgggggggggock"/>
       </header>
     </div>
   );
