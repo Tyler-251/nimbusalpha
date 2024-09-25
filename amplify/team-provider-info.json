@@ -1,15 +1,20 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-nimbusalpha-dev-7629c-authRole",
-      "UnauthRoleArn": "arn:aws:iam::617057808357:role/amplify-nimbusalpha-dev-7629c-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::617057808357:role/amplify-nimbusalpha-dev-7629c-authRole",
+      "AuthRoleName": "amplify-nimbusalpha-dev-d642f-authRole",
+      "UnauthRoleArn": "arn:aws:iam::617057808357:role/amplify-nimbusalpha-dev-d642f-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::617057808357:role/amplify-nimbusalpha-dev-d642f-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-nimbusalpha-dev-7629c-deployment",
-      "UnauthRoleName": "amplify-nimbusalpha-dev-7629c-unauthRole",
-      "StackName": "amplify-nimbusalpha-dev-7629c",
-      "StackId": "arn:aws:cloudformation:us-east-1:617057808357:stack/amplify-nimbusalpha-dev-7629c/c443eb70-7acb-11ef-83d6-0affcff29dbf",
-      "AmplifyAppId": "d2ifcvvy5cqxe1"
+      "DeploymentBucketName": "amplify-nimbusalpha-dev-d642f-deployment",
+      "UnauthRoleName": "amplify-nimbusalpha-dev-d642f-unauthRole",
+      "StackName": "amplify-nimbusalpha-dev-d642f",
+      "StackId": "arn:aws:cloudformation:us-east-1:617057808357:stack/amplify-nimbusalpha-dev-d642f/1ad972a0-7af1-11ef-bcf7-12d79f4f2d29",
+      "AmplifyAppId": "dccg23r3mleys"
+    },
+    "categories": {
+      "auth": {
+        "nimbusalphaad9bebfb": {}
+      }
     }
   }
 }
