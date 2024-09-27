@@ -6,8 +6,8 @@ import * as queries from './graphql/queries';
 let boxStyles = {
     width: "100px", 
     height: "100px", 
-    "background-color": "#444455", 
-    "font-size": "10px",
+    "backgroundColor": "#444455", 
+    "fontSize": "10px",
     margin: "5px",
     position: "relative"
 };
@@ -16,14 +16,11 @@ let xButtonStyles = {
     position: "absolute",
     top: "-8px",
     right: "-8px",
-    "border-radius": "10px",
+    "borderRadius": "10px",
     backgroundColor: "red",
-    "font-weight": "bold",
+    "fontWeight": "bold",
     color: "white"
-    
 }
-
-
 
 const EventBox = (props) => {
     var client = generateClient();

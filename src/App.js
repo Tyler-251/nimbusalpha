@@ -1,5 +1,5 @@
 import { Amplify } from 'aws-amplify';
-import { signOut, fetchUserAttributes } from '@aws-amplify/auth';
+import { signOut, fetchUserAttributes, getCurrentUser } from '@aws-amplify/auth';
 import awsconfig from './amplifyconfiguration.json';
 import { withAuthenticator } from '@aws-amplify/ui-react';
 import React, {useState, useEffect} from 'react';
@@ -13,10 +13,17 @@ import { generateClient } from 'aws-amplify/api';
 import * as mutations from './graphql/mutations';
 import * as queries from './graphql/queries';
 
+import { Calendar, momentLocalizer } from 'react-big-calendar'
+import 'react-big-calendar/lib/css/react-big-calendar.css'
+import moment from 'moment'
+
+
+
 Amplify.configure(awsconfig); 
 
 function App() {
   var client = generateClient(); //API
+  const localizer = momentLocalizer(moment);
   
   const [userInfo, setUserInfo] = useState('');
   const [eventName, setEventName] = useState('');
@@ -39,6 +46,7 @@ function App() {
 
   useEffect(() => {
     async function getEventList() {
+      if (!userInfo) return;
       const allEvents = await client.graphql({
         query: queries.listDateEvents,
         variables: {
@@ -121,6 +129,11 @@ function App() {
           })}
         </ul>
       </header>
+      <Calendar
+        localizer={localizer}
+        startAccessor="start"
+        endAccessor="end"
+        style={{height: 500}}/>
     </div>
   );
 }
