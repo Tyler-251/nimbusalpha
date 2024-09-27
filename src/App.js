@@ -12,7 +12,6 @@ import DateEventCreateForm from './ui-components/DateEventCreateForm.jsx';
 import { generateClient } from 'aws-amplify/api';
 import * as mutations from './graphql/mutations';
 import * as queries from './graphql/queries';
-import { act } from 'react-dom/test-utils';
 
 Amplify.configure(awsconfig); 
 
@@ -36,13 +35,17 @@ function App() {
       }
     }
     fetchUser();
+  }, []);
 
+  useEffect(() => {
     async function getEventList() {
       const allEvents = await client.graphql({
         query: queries.listDateEvents,
-        filter: {
-          name: {
-            eq: 'test'
+        variables: {
+          filter: {
+            username: {
+              eq: userInfo.sub
+            }
           }
         }
       });
@@ -51,20 +54,21 @@ function App() {
       setEventList(allEvents.data.listDateEvents.items);
     }
     getEventList();
-  }, []);
-  
-  const activeUser = userInfo;
-  console.log(activeUser);
+  }, [userInfo]);
 
   const handleEventFormSubmit = async (e) => {
     e.preventDefault();
+
+    if (eventName == '' || eventDesc == '' || eventDate == '') {
+      return null;
+    }
     
     const dateEventDetails = {
       name: eventName,
       desc: eventDesc,
       startDate: eventDate,
       endDate: eventDate,
-      username: activeUser.sub
+      username: userInfo.sub
     }
     
     const newEvent = await client.graphql({
@@ -72,60 +76,48 @@ function App() {
       variables: {input: dateEventDetails}
     });
 
+    console.log(newEvent);
+    let tempList = eventList;
+    tempList.push(newEvent.data.createDateEvent);
+    setEventList(tempList);
+
     setEventName('');
     setEventDesc('');
     setEventDate('');
-
-    setEventList(eventList);
-    setEventList(eventList.sort((a,b) => a.startDate - b.startDate));
-    
   }
-
 
   async function handleSignOut() {
     await signOut();
   }
 
-  // async function addEvent() {
-  //   const result = await client.graphql({
-  //     query: mutations.createEvent,
-  //     variables: {
-  //       input: {
-  //         date: '4-4-2004',
-  //         usesTime: true,
-  //         time: "14:00:36"
-  //       }
-  //     }
-  //   });
-  // }
-
-
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
           Welcome, {userInfo.name}!
         </p>
         <button type='button' onClick={handleSignOut}>Sign Out</button>
         <div style={{display: "flex"}}>
-          <form onSubmit={handleEventFormSubmit} style={{margin: "20px"}}>
+
+          <form onSubmit={handleEventFormSubmit} style={{padding: "20px", margin: "20px", backgroundColor: "darkblue"}}>
             <h2>Create Event:</h2>
             <input type="text" name='name' id='name' placeholder='Event Name' value={eventName} onChange={e => setEventName(e.target.value)}/><br/>
             <input type="text" name='desc' id='desc' placeholder='Event Description' value={eventDesc} onChange={e => setEventDesc(e.target.value)}/><br/>
             <input type="date" name='date' id='date' value={eventDate} onChange={e => setEventDate(e.target.value)}/><br/>
             <button type='submit'>Submit Event</button>
           </form>
-          <div style={{margin: "20px"}}>
+
+          <div style={{padding: "20px", margin: "20px", backgroundColor: "darkred"}}>
             <h2>Current Event Details:</h2>
             <p>{eventName}<br/>{eventDesc}<br/>{eventDate}</p>
           </div>
+
         </div>
         <h3>My Events:</h3>
         <ul style={{display: "flex"}}>
           {
             eventList.map((event) => {
-              return (<EventBox title={event.name} desc={event.desc} date={event.startDate}/>);
+              return (<EventBox title={event.name} desc={event.desc} date={event.startDate} id={event.id}/>);
           })}
         </ul>
       </header>
