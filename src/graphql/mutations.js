@@ -1,108 +1,114 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createEvent = /* GraphQL */ `
-  mutation CreateEvent(
-    $input: CreateEventInput!
-    $condition: ModelEventConditionInput
+export const createDateAndTimeEvent = /* GraphQL */ `
+  mutation CreateDateAndTimeEvent(
+    $input: CreateDateAndTimeEventInput!
+    $condition: ModelDateAndTimeEventConditionInput
   ) {
-    createEvent(input: $input, condition: $condition) {
+    createDateAndTimeEvent(input: $input, condition: $condition) {
       id
-      date
-      usesTime
-      time
-      userID
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const updateEvent = /* GraphQL */ `
-  mutation UpdateEvent(
-    $input: UpdateEventInput!
-    $condition: ModelEventConditionInput
-  ) {
-    updateEvent(input: $input, condition: $condition) {
-      id
-      date
-      usesTime
-      time
-      userID
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const deleteEvent = /* GraphQL */ `
-  mutation DeleteEvent(
-    $input: DeleteEventInput!
-    $condition: ModelEventConditionInput
-  ) {
-    deleteEvent(input: $input, condition: $condition) {
-      id
-      date
-      usesTime
-      time
-      userID
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const createUser = /* GraphQL */ `
-  mutation CreateUser(
-    $input: CreateUserInput!
-    $condition: ModelUserConditionInput
-  ) {
-    createUser(input: $input, condition: $condition) {
-      id
-      email
+      startDate
+      endDate
+      startTime
+      endTime
       name
-      Events {
-        nextToken
-        __typename
-      }
+      desc
+      username
       createdAt
       updatedAt
       __typename
     }
   }
 `;
-export const updateUser = /* GraphQL */ `
-  mutation UpdateUser(
-    $input: UpdateUserInput!
-    $condition: ModelUserConditionInput
+export const updateDateAndTimeEvent = /* GraphQL */ `
+  mutation UpdateDateAndTimeEvent(
+    $input: UpdateDateAndTimeEventInput!
+    $condition: ModelDateAndTimeEventConditionInput
   ) {
-    updateUser(input: $input, condition: $condition) {
+    updateDateAndTimeEvent(input: $input, condition: $condition) {
       id
-      email
+      startDate
+      endDate
+      startTime
+      endTime
       name
-      Events {
-        nextToken
-        __typename
-      }
+      desc
+      username
       createdAt
       updatedAt
       __typename
     }
   }
 `;
-export const deleteUser = /* GraphQL */ `
-  mutation DeleteUser(
-    $input: DeleteUserInput!
-    $condition: ModelUserConditionInput
+export const deleteDateAndTimeEvent = /* GraphQL */ `
+  mutation DeleteDateAndTimeEvent(
+    $input: DeleteDateAndTimeEventInput!
+    $condition: ModelDateAndTimeEventConditionInput
   ) {
-    deleteUser(input: $input, condition: $condition) {
+    deleteDateAndTimeEvent(input: $input, condition: $condition) {
       id
-      email
+      startDate
+      endDate
+      startTime
+      endTime
       name
-      Events {
-        nextToken
-        __typename
-      }
+      desc
+      username
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const createDateEvent = /* GraphQL */ `
+  mutation CreateDateEvent(
+    $input: CreateDateEventInput!
+    $condition: ModelDateEventConditionInput
+  ) {
+    createDateEvent(input: $input, condition: $condition) {
+      id
+      startDate
+      endDate
+      name
+      desc
+      username
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateDateEvent = /* GraphQL */ `
+  mutation UpdateDateEvent(
+    $input: UpdateDateEventInput!
+    $condition: ModelDateEventConditionInput
+  ) {
+    updateDateEvent(input: $input, condition: $condition) {
+      id
+      startDate
+      endDate
+      name
+      desc
+      username
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteDateEvent = /* GraphQL */ `
+  mutation DeleteDateEvent(
+    $input: DeleteDateEventInput!
+    $condition: ModelDateEventConditionInput
+  ) {
+    deleteDateEvent(input: $input, condition: $condition) {
+      id
+      startDate
+      endDate
+      name
+      desc
+      username
       createdAt
       updatedAt
       __typename
