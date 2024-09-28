@@ -30,6 +30,7 @@ function App() {
   const [eventList, setEventList] = useState([]);
   const [calendarEventList, setCalendarEventList] = useState([]);
 
+  const [reset, setReset] = useState(true);
   
   useEffect(() => {
     const fetchUser = async () => {
@@ -59,7 +60,7 @@ function App() {
       setEventList(allEvents.data.listDateEvents.items);
     }
     getEventList();
-  }, [userInfo]);
+  }, [userInfo, reset]);
 
   useEffect(() => {
     let events = [];
@@ -74,7 +75,8 @@ function App() {
       });
     });
     setCalendarEventList(events);
-  }, [eventList]);
+    console.log("Set Calendar events");
+  }, [eventList, reset]);
 
   const handleEventFormSubmit = async (e) => {
     e.preventDefault();
@@ -104,6 +106,8 @@ function App() {
     setEventName('');
     setEventDesc('');
     setEventStartDate('');
+
+    setReset(!reset);
   }
 
   const handleEndDateCheckBox = (e) => {
@@ -122,6 +126,11 @@ function App() {
           Welcome, {userInfo.name || "..."}!
         </p>
         <button type='button' onClick={handleSignOut}>Sign Out</button>
+          <FullCalendar 
+            plugins={[dayGrid]}
+            initialView='dayGridMonth'
+            events={calendarEventList}
+          />
         <div style={{display: "flex"}}>
 
           <form onSubmit={handleEventFormSubmit} style={{padding: "20px", margin: "20px", backgroundColor: "darkblue"}}>
@@ -141,15 +150,10 @@ function App() {
         <div style={{display: "flex", backgroundColor: "#44ff44", padding: "10px", width: "70%", marginBottom: "20px", flexWrap: "wrap", justifyContent: "center"}}>
           {
             eventList.map((event) => {
-              return (<EventBox event={event} key={event.id}/>);
+              return (<EventBox event={event} key={event.id} onDelete={()=>{setReset(!reset);}}/>);
           })}
         </div>
       </header>
-      <FullCalendar 
-        plugins={[dayGrid]}
-        initialView='dayGridMonth'
-        events={calendarEventList}
-      />
     </div>
   );
 }

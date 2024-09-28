@@ -34,6 +34,7 @@ const EventBox = (props) => {
                 }
             }
         });
+        props.onDelete(event.id);
         document.getElementById(event.id).hidden = true;
     }
 
