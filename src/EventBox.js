@@ -9,7 +9,7 @@ let boxStyles = {
     "backgroundColor": "#444455", 
     "fontSize": "10px",
     margin: "5px",
-    position: "relative"
+    position: "relative",
 };
 
 let xButtonStyles = {
@@ -24,24 +24,24 @@ let xButtonStyles = {
 
 const EventBox = (props) => {
     var client = generateClient();
-
+    const event = props.event;
     const handleDeleteButtonClick = async () => {
         const deletedEvent = await client.graphql({
             query: mutations.deleteDateEvent,
             variables: {
                 input: {
-                    id: props.id
+                    id: event.id
                 }
             }
         });
-        document.getElementById(props.id).hidden = true;
+        document.getElementById(event.id).hidden = true;
     }
 
     return (
-        <div style={boxStyles} id={props.id}>
-            <p>{props.title}</p>
-            <p>{props.desc}</p>
-            <p>{props.date}</p>
+        <div style={boxStyles} id={event.id}>
+            <p><b>{event.name}</b></p>
+            <p>from {event.startDate}</p>
+            <p>to {event.endDate}</p>
             <button style={xButtonStyles} onClick={handleDeleteButtonClick}>X</button>
         </div>
     );
