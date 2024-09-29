@@ -1,20 +1,27 @@
-import { Amplify } from 'aws-amplify';
-import { signOut, fetchUserAttributes, getCurrentUser } from '@aws-amplify/auth';
-import awsconfig from './amplifyconfiguration.json';
-import { withAuthenticator } from '@aws-amplify/ui-react';
 import React, {useState, useEffect} from 'react';
-import '@aws-amplify/ui-react/styles.css';
-import logo from './logo.svg';
-import './App.css';
-import EventBox from './EventBox.js';
-
+import { Amplify } from 'aws-amplify';
+import { signOut, fetchUserAttributes, getCurrentUser, fetchAuthSession } from '@aws-amplify/auth';
+import { withAuthenticator } from '@aws-amplify/ui-react';
 import { generateClient } from 'aws-amplify/api';
+import awsconfig from './amplifyconfiguration.json';
+import logo from './logo.svg';
+import EventBox from './EventBox.js';
+import '@aws-amplify/ui-react/styles.css';
+import './App.css';
+
+import {CreateAgentCommand} from '@aws-sdk/client-bedrock-agent';
+import {InvokeAgentCommand} from '@aws-sdk/client-bedrock-agent-runtime';
+import {InvokeModelCommand, BedrockRuntimeClient} from '@aws-sdk/client-bedrock-runtime';
+
+
 import * as mutations from './graphql/mutations';
 import * as queries from './graphql/queries';
 
 import caledarCore from '@fullcalendar/core';
 import dayGrid from '@fullcalendar/daygrid';
 import FullCalendar from '@fullcalendar/react';
+
+const MODELID = 'amazon.titan-text-lite-v1';
 
 Amplify.configure(awsconfig); 
 
@@ -30,9 +37,12 @@ function App() {
   const [eventList, setEventList] = useState([]);
   const [calendarEventList, setCalendarEventList] = useState([]);
 
-  const [reset, setReset] = useState(true);
+  const [prompt, setPrompt] = useState('');
+  const [response, setResponse] = useState('<Response>');
+
+  const [reset, setReset] = useState(true); //used to reset states dependent upon reset (ie calendar events, etc)
   
-  useEffect(() => {
+  useEffect(() => {  // ON MOUNT
     const fetchUser = async () => {
       try {
         const user = await fetchUserAttributes();
@@ -44,7 +54,7 @@ function App() {
     fetchUser();
   }, []);
 
-  useEffect(() => {
+  useEffect(() => { 
     async function getEventList() {
       if (!userInfo) return;
       const allEvents = await client.graphql({
@@ -76,7 +86,7 @@ function App() {
     });
     setCalendarEventList(events);
     console.log("Set Calendar events");
-  }, [eventList, reset]);
+  }, [eventList]);
 
   const handleEventFormSubmit = async (e) => {
     e.preventDefault();
@@ -113,6 +123,40 @@ function App() {
   const handleEndDateCheckBox = (e) => {
     var endDateInput = document.getElementById("end-date-input");
     endDateInput.disabled = !e.target.value;
+  }
+
+  const handlePromptSumbit = async (e) => {
+    e.preventDefault();
+    if (prompt == '') return;
+
+    const authSession = await fetchAuthSession();
+
+    const modelClient = new BedrockRuntimeClient({region: "us-east-1", credentials: authSession.credentials});
+    const payload = {
+      inputText: prompt,
+      textGenerationConfig: {
+        maxTokenCount: 4096,
+        stopSequences: [],
+        temperature: 0,
+        topP: 1,
+      }
+    }
+
+    console.log("query pending...");
+    const apiResponse = await modelClient.send(
+      new InvokeModelCommand({
+        contentType: 'application/json',
+        body: JSON.stringify(payload),
+        modelId: MODELID
+      })
+    );
+    console.log("recieved payload, decoding...");
+
+    const apiOutput = new TextDecoder().decode(apiResponse.body);
+    const jsonOutput = JSON.parse(apiOutput);
+    console.log(jsonOutput);
+
+    setResponse(jsonOutput.results[0].outputText);
   }
 
   async function handleSignOut() {
@@ -153,6 +197,16 @@ function App() {
               return (<EventBox event={event} key={event.id} onDelete={()=>{setReset(!reset);}}/>);
           })}
         </div>
+        
+        <div>
+          <h3>Prompt Area</h3>
+          <form onSubmit={handlePromptSumbit}>
+            <input type='text' value={prompt} onChange={e => setPrompt(e.target.value)}/>
+            <button type='submit'>Submit Prompt</button>
+          </form>
+          <p>{response}</p>
+        </div>
+        <div style={{height: "100px"}}/>
       </header>
     </div>
   );
