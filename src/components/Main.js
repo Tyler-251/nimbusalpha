@@ -137,11 +137,11 @@ function Main() {
 
 
     let eventData = JSON.stringify(eventList);
-    const toSendPrompt = "Here is a list of events the user already has scheduled: " + eventData + "\n\nHere is the prompt: " + prompt;
+    const toSendPrompt = "Here is a list of events the user already has scheduled: " + eventData + "\n\nHere is the prompt to retrieve the json aligning with the user request: " + prompt;
 
     const payload = {
       agentId: 'QLNAQZAVCZ',
-      agentAliasId: '3GNP72SWHC',
+      agentAliasId: '8AJCSJASX9',
       sessionId: sessionId,
       inputText: toSendPrompt
     }
@@ -176,8 +176,21 @@ function Main() {
 
       if (parsed) {
         console.log(potentialJSON);
-        await AddEvents(potentialJSON);
-        setResponse(completion + ", successfully added event(s)");
+
+        switch (potentialJSON["queryType"]) {
+          case "create":
+            await AddEvents(potentialJSON);
+            break;
+          case "modify":
+            break;
+          case "delete":
+            await DeleteEvents(potentialJSON);
+            break;
+          default:
+            break;
+        }
+
+        setResponse(completion + ", successfully processed event(s)");
       }
     } catch (err) {
       console.error(err);
@@ -188,17 +201,17 @@ function Main() {
     await signOut();
   }
 
-  async function AddEvents(event) {
+  async function AddEvents(input) {
     console.log("Creating event!");
 
-    for (const iEvent of event["events"]) {
+    for (const event of input["events"]) {
       let newEvent = await client.graphql({
         query: mutations.createDateEvent,
         variables: {
           input: {
-            name: iEvent["title"],
-            startDate: iEvent["startDate"],
-            endDate: iEvent["endDate"],
+            name: event["title"],
+            startDate: event["startDate"],
+            endDate: event["endDate"],
             username: userInfo.sub
           }
         }
@@ -207,7 +220,25 @@ function Main() {
       tempList.push(newEvent.data.createDateEvent);
       setEventList(tempList);
     }
+  }
 
+  async function ModifyEvents(input) {
+
+  }
+
+  async function DeleteEvents(input) {
+    console.log("deleting event");
+    for (const event of input["events"]) {
+      let newEvent = await client.graphql({
+        query: mutations.deleteDateEvent,
+        variables: {
+          input: {
+            id: event["id"]
+          }
+        }
+      });
+    }
+    setReset(!reset);
   }
 
   return (
