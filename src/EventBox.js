@@ -10,11 +10,12 @@ let boxStyles = {
     "fontSize": "10px",
     margin: "5px",
     position: "relative",
+    borderRadius: '10px'
 };
 
 let xButtonStyles = {
     position: "absolute",
-    top: "-8px",
+    top: "-6px",
     right: "-8px",
     "borderRadius": "10px",
     backgroundColor: "red",
