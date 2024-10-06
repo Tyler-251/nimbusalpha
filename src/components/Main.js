@@ -13,6 +13,7 @@ import {CreateAgentCommand} from '@aws-sdk/client-bedrock-agent';
 import {InvokeAgentCommand, BedrockAgentRuntimeClient} from '@aws-sdk/client-bedrock-agent-runtime';
 import {InvokeModelCommand, BedrockRuntimeClient} from '@aws-sdk/client-bedrock-runtime';
 
+import AgentInterface from "./AgentInterface.js"
 
 import * as mutations from '../graphql/mutations';
 import * as queries from '../graphql/queries';
@@ -242,51 +243,27 @@ function Main() {
   }
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
+    <div>
+      <div style={{display: "flex"}}>
+        <h1>
           Welcome, {userInfo.name || "..."}!
-        </p>
+        </h1>
         <button type='button' onClick={handleSignOut}>Sign Out</button>
-        <a href="/agent">agent</a>
-          <FullCalendar 
-            plugins={[dayGrid]}
-            initialView='dayGridMonth'
-            events={calendarEventList}
-          />
-        <div style={{display: "flex"}}>
-
-          <form onSubmit={handleEventFormSubmit} style={{padding: "20px", margin: "20px", backgroundColor: "darkblue"}}>
-            <h2>Create Event:</h2>
-            <strong>Title:</strong> <input type="text" name='name' id='name' placeholder='Event Name' value={eventName} onChange={e => setEventName(e.target.value)}/><br/>
-            <strong>Start Date:</strong> <input type="date" name='date' id='date' value={eventStartDate} onChange={e => setEventStartDate(e.target.value)}/><br/>
-            <strong>End Date:</strong> <input type="checkbox" onChange={handleEndDateCheckBox}/><input id="end-date-input" type="date" name='date' value={eventEndDate} onChange={e => setEventEndDate(e.target.value)} disabled/><br/>
-            <button type='submit'>Submit Event</button>
-          </form>
-
-          <div style={{padding: "20px", margin: "20px", backgroundColor: "darkred"}}>
-            <h2>Current Event Details:</h2>
-            <p>{eventName}<br/>{eventStartDate} <br/> {eventEndDate}</p>
-          </div>
-        </div>
-        <h3>My Events:</h3>
-        <div style={{display: "flex", backgroundColor: "#44ff44", padding: "10px", width: "70%", marginBottom: "20px", flexWrap: "wrap", justifyContent: "center"}}>
-          {
-            eventList.map((event) => {
-              return (<EventBox event={event} key={event.id} onDelete={()=>{setReset(!reset);}}/>);
-          })}
-        </div>
+      </div>
         
-        <div>
-          <h3>Prompt Area</h3>
-          <form onSubmit={handlePromptSumbit}>
-            <input type='text' value={prompt} onChange={e => setPrompt(e.target.value)}/>
-            <button type='submit'>Submit Prompt</button>
-          </form>
-          <p>{response}</p>
-        </div>
-        <div style={{height: "100px"}}/>
-      </header>
+      <FullCalendar 
+        plugins={[dayGrid]}
+        initialView='dayGridMonth'
+        events={calendarEventList}
+        />
+      <AgentInterface events={eventList} callback={()=>setReset(!reset)}/>
+      <h3>My Events:</h3>
+      <div style={{color: "white", display: "flex", backgroundColor: "#333333", padding: "10px", width: "100%", marginBottom: "20px", flexWrap: "wrap", justifyContent: "center"}}>
+        {
+          eventList.map((event) => {
+            return (<EventBox event={event} key={event.id} onDelete={()=>{setReset(!reset);}}/>);
+        })}
+      </div>
     </div>
   );
 }

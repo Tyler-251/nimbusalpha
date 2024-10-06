@@ -1,3 +1,77 @@
-* {
-    color: green;
+.chatBox {
+    color: black;
+    background-color: #ebe6e3;
+
+    position: fixed;
+    bottom: 65px;
+    right: 5px;
+    z-index: 1;
+
+    width: 350px;
+    height: 450px;
+
+    padding: 10px;
+
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border-radius: 10px 5px;
+}
+
+.chatBox h2 {
+    color: black;
+    position: fixed;
+    transform: translate(130px, -80px);
+    padding: 5px 25px;
+    background-color: rgb(255, 187, 132);
+    border-radius: 20px;
+    border-color: black;
+}
+
+.chatBox .userMessageBox {
+    background-color: rgb(127, 178, 255);
+    color: rgb(26, 0, 173);
+    width: 70%;
+    margin-left: 30%;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.chatBox .agentMessageBox {
+    background-color: rgb(255, 255, 255);
+    color: gray;
+    width: 70%;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.chatBox form {
+    position: fixed;
+    transform: translate(-10px, 435px);
+}
+
+.chatBox form textarea {
+    width: 300px;
+    overflow: auto;
+    resize: none;
+}
+
+.chatBox form button {
+    background-color: blue;
+    color: white;
+    font-weight: bold;
+
+    width: 53px;
+    height: 53px;
+    font-size: 15px;
+
+    border: none;
+    position: fixed;
+
+}
+
+.chatBox img {
+    width: 20%;
+    margin-left: 10%;
+    margin-right: 70%;
+    border-radius: 50%;
 }
