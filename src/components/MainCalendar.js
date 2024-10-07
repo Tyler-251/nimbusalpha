@@ -117,6 +117,19 @@ function MainCalendar() {
             return (<EventBox event={event} key={event.id} onDelete={()=>{setReset(!reset);}}/>);
         })}
       </div>
+      <div className='ad-div'>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5524320471332797" crossorigin="anonymous"></script>
+        {/* Basic Ad */}
+        <ins class="adsbygoogle"
+            styles={{display:"block"}}
+            data-ad-client="ca-pub-5524320471332797"
+            data-ad-slot="1727885410"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
     </div>
   );
 }

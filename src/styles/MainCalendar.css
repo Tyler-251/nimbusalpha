@@ -2,3 +2,14 @@
     background-color: rgb(56, 57, 73);
     color: white;
 }
+
+.adsbygoogle {
+    height: 300px;
+    width: 300px;
+}
+
+.ad-div {
+    height: 400px;
+    width: 400px;
+    background-color: aqua;
+}
