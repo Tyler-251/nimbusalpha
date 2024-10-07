@@ -25,23 +25,28 @@ const AgentMessageBox = ({text}) => {
     );
 }
 
+
+
 const minimizedStyle = {right: "-380px"}
 const minimizedButtonStyle = {transform: "translate(-40px, 30px)"}
 
 
 function AgentInterface(props) {
     const [messageList, setMessageList] = useState([<AgentMessageBox text="Hello, how can I help you today?"/>]);
-    const [input, setInput] = useState("");
-    const [client, setClient] = useState();
+    const [input, setInput] = useState(""); //chatbox input
+    const [client, setClient] = useState(); //agent client
     const [userInfo, setUserInfo] = useState();
     const [chatEnabled, setChatEnabled] = useState(true);
     const [loadingSign, setLoadingSign] = useState(false);
     const [sessionId, setSessionId] = useState();
+
     const [overrideChatStyle, setOverrideChatStyle] = useState({});
     const [minimized, setMinimized] = useState(false);
     const [minimizedIcon, setMinimizedIcon] = useState(">");
     const [overrideButtonStyle, setOverrideButtonStyle] = useState({});
-    const scrollRef = useRef(null);
+
+    const scrollRef = useRef(null); //manage scrolldown on new message
+    const chatRef = useRef(null); //manage focus textarea on agent response
 
 //#region useEffect
     useEffect(()=>{
@@ -64,6 +69,8 @@ function AgentInterface(props) {
 
     useEffect(()=>{
         scrollRef.current?.scrollIntoView({behavior: "smooth"});
+        chatRef.current?.focus();
+        chatRef.current?.setSelectionRange(0,0);
     }, [messageList])
 
     useEffect(() => {
@@ -93,8 +100,42 @@ function AgentInterface(props) {
         }
         setMessageList((prevItems) => [...prevItems, <UserMessageBox text={text}/>]);
     }
-    function AddCreateEventConfirmation(event) {
-
+    function AddCreateEventConfirmations(events) {
+        for (const event of events) {
+            setMessageList((prevItems) => [...prevItems, <CreateConfirmBox client={graphQLClient} event={event} user={userInfo}/>]);
+        }
+    }
+    const CreateConfirmBox = ({event}) => {
+        const [pendingTitle, setPendingTitle] = useState(event["title"]);
+        const [pendingDate, setPendingDate] = useState(event["startDate"]);
+        async function ConfirmEvent() {
+            let newEvent = await graphQLClient.graphql({
+                query: mutations.createDateEvent,
+                variables: {
+                    input: {
+                        name: pendingTitle,
+                        startDate: pendingDate,
+                        endDate: pendingDate,
+                        username: userInfo.sub
+                    }
+                }
+            });
+            props.callback();
+        }
+        return(
+            <div className="createConfirmBox">
+                <div>
+                    <h3>Title:</h3>
+                    <input type="text" value={pendingTitle} onChange={(e) => setPendingTitle(e.target.value)}/>
+                    <h4>Date:</h4>
+                    <input type="date" value={pendingDate} onChange={(e) => setPendingDate(e.target.value)}/>
+                </div>
+                <div className="buttons">
+                    <button id="confirm-button" onClick={ConfirmEvent}>Confirm</button>
+                    <button id="cancel-button">Cancel</button>
+                </div>
+            </div>
+        );
     }
 //#endregion
 //#region graphql
@@ -148,11 +189,39 @@ function AgentInterface(props) {
         setChatEnabled(false);
         setLoadingSign(true);
 
-        let prompt = "a list of user's events: " + JSON.stringify(props.events) + "\n\nUser input: " + userInput;
+        const today = new Date();
+        let dayName = "";
+        switch (today.getDay()) {
+            case "0":
+                dayName = "Monday";
+                break;
+            case "1":
+                dayName = "Tuesday";
+                break;
+            case "2":
+                dayName = "Wednesday";
+                break;
+            case "3":
+                dayName = "Thursday";
+                break;
+            case "4":
+                dayName = "Friday";
+                break;
+            case "5":
+                dayName = "Saturday";
+                break;
+            case "6":
+                dayName = "Sunday";
+                break;
+            default:
+                break;
+        }
+
+        let prompt = "Today's date: " + today + ", " + dayName + "\n\n a list of user's events: " + JSON.stringify(props.events) + "\n\nUser input: " + userInput;
 
         const payload = {
             agentId: 'QLNAQZAVCZ',
-            agentAliasId: '8AJCSJASX9',
+            agentAliasId: '81N5PCIIIZ',
             sessionId: sessionId,
             inputText: prompt
         }
@@ -170,9 +239,10 @@ function AgentInterface(props) {
                 let multipleResponses = completion.split("```");
                 for (const response of multipleResponses) {
                     let potentialJson = JSON.parse(response);
+                    console.log(potentialJson);
                     switch (potentialJson["queryType"]) {
                         case "create":
-                            AddEvents(potentialJson);
+                            AddCreateEventConfirmations(potentialJson["events"]);
                             break;
                         case "delete":
                             DeleteEvents(potentialJson);
@@ -180,9 +250,8 @@ function AgentInterface(props) {
                         default:
                             break;
                     }
-                    AddAgentMessage("json identified: " + JSON.stringify(potentialJson));
                 }
-            } catch { // return response if not a json
+            } catch (err) { // return response if not a json
                 AddAgentMessage(completion);
             }
         } catch (err) { // failsafe TODO
@@ -190,7 +259,8 @@ function AgentInterface(props) {
         }
         setChatEnabled(true);
         setLoadingSign(false);
-    }
+
+    } //TODO lambda function to get days of week for a year
     
     return(
         <div className="chatBoxContainer" style={overrideChatStyle}>
@@ -202,7 +272,7 @@ function AgentInterface(props) {
                 <div ref={scrollRef}/>
             </div>
             <form className="form" onSubmit={HandleChatSubmit}>
-                <textarea placeholder="Message" value={input} disabled={!chatEnabled} onKeyDown={async (e)=>{
+                <textarea ref={chatRef} placeholder="Message" value={input} disabled={!chatEnabled} onKeyDown={async (e)=>{
                     if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
                         HandleChatSubmit(e);
