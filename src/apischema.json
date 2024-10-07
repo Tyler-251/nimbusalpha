@@ -1,0 +1,75 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Calendarific API",
+        "version": "2",
+        "description": "Get information on holiday events"
+    },
+    "paths": {
+        "/api/v2/holidays?&api_key=deLyUTO5nmFB7rLDuQbdOuHKOtGgzb01&country=US&year={year}": {
+            "get": {
+                "summary": "Get a list of all US Holidays",
+                "description": "Get the list of all open insurance claims. Return all the open claimIds.",
+                "operationId": "getHolidaysByYear",
+                "parameters": [{
+                    "name": "year",
+                    "in": "path",
+                    "description": "Current year",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Gets the list of all holidays in a year",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "description": "Name of the holiday"
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "description": "Description of the holiday"
+                                            },
+                                            "date": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "iso": {
+                                                        "type": "string",
+                                                        "description": "Date of the holiday in ISO format"
+                                                    }
+                                                }
+                                            },
+                                            "type": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string",
+                                                    "description": "Type of holiday"
+                                                }
+                                            },
+                                            "primary_type": {
+                                                "type": "string",
+                                                "description": "Primary type of holiday"
+                                            },
+                                            "locations": {
+                                                "type": "string",
+                                                "description": "List of relevant locations for the holiday"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+  }

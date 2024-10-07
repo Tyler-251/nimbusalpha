@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { generateClient } from 'aws-amplify/api';
-import * as mutations from './graphql/mutations';
-import * as queries from './graphql/queries';
+import * as mutations from '../graphql/mutations';
+import * as queries from '../graphql/queries';
 
 let boxStyles = {
     width: "100px", 

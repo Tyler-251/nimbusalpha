@@ -3,7 +3,7 @@ import { signOut, fetchUserAttributes, getCurrentUser, fetchAuthSession } from '
 import {InvokeAgentCommand, BedrockAgentRuntimeClient} from '@aws-sdk/client-bedrock-agent-runtime';
 import "../styles/AgentInterface.css"
 import { useEffect, useState, useRef } from "react";
-import loadingImage from "../img/Hourglass.gif"
+import loadingImage from "../img/loadingdots.gif"
 
 import * as mutations from '../graphql/mutations';
 import * as queries from '../graphql/queries';
@@ -24,20 +24,10 @@ const AgentMessageBox = ({text}) => {
         </div>
     );
 }
-const testMessages = [
-    {
-        "author": "user",
-        "text": "Hi Nimbus!"
-    },
-    {
-        "author": "agent",
-        "text": "Hello, how can I help you today?"
-    }
-]
 
-const testDivs = [
+const minimizedStyle = {right: "-380px"}
+const minimizedButtonStyle = {transform: "translate(-40px, 30px)"}
 
-]
 
 function AgentInterface(props) {
     const [messageList, setMessageList] = useState([<AgentMessageBox text="Hello, how can I help you today?"/>]);
@@ -47,9 +37,12 @@ function AgentInterface(props) {
     const [chatEnabled, setChatEnabled] = useState(true);
     const [loadingSign, setLoadingSign] = useState(false);
     const [sessionId, setSessionId] = useState();
+    const [overrideChatStyle, setOverrideChatStyle] = useState({});
+    const [minimized, setMinimized] = useState(false);
+    const [minimizedIcon, setMinimizedIcon] = useState(">");
+    const [overrideButtonStyle, setOverrideButtonStyle] = useState({});
     const scrollRef = useRef(null);
 
-    const graphQLClient = generateClient();
 //#region useEffect
     useEffect(()=>{
         const generateClient = async () => {
@@ -72,6 +65,18 @@ function AgentInterface(props) {
     useEffect(()=>{
         scrollRef.current?.scrollIntoView({behavior: "smooth"});
     }, [messageList])
+
+    useEffect(() => {
+        if (minimized) {
+            setOverrideChatStyle(minimizedStyle);
+            setOverrideButtonStyle(minimizedButtonStyle);
+            setMinimizedIcon("<");
+        } else {
+            setOverrideChatStyle({});
+            setOverrideButtonStyle({});
+            setMinimizedIcon(">");
+        }
+    }, [minimized])
 //#endregion
 //#region messages
     function AddAgentMessage(text) {
@@ -88,8 +93,13 @@ function AgentInterface(props) {
         }
         setMessageList((prevItems) => [...prevItems, <UserMessageBox text={text}/>]);
     }
+    function AddCreateEventConfirmation(event) {
+
+    }
 //#endregion
 //#region graphql
+
+    const graphQLClient = generateClient();
     async function AddEvents(input) {
         console.log("Creating event!");
     
@@ -157,18 +167,21 @@ function AgentInterface(props) {
                 completion += decodedResponse;
             }
             try { // attempt to parse a json response
-                let potentialJson = JSON.parse(completion);
-                switch (potentialJson["queryType"]) {
-                    case "create":
-                        AddEvents(potentialJson);
-                        break;
-                    case "delete":
-                        DeleteEvents(potentialJson);
-                        break;
-                    default:
-                        break;
+                let multipleResponses = completion.split("```");
+                for (const response of multipleResponses) {
+                    let potentialJson = JSON.parse(response);
+                    switch (potentialJson["queryType"]) {
+                        case "create":
+                            AddEvents(potentialJson);
+                            break;
+                        case "delete":
+                            DeleteEvents(potentialJson);
+                            break;
+                        default:
+                            break;
+                    }
+                    AddAgentMessage("json identified: " + JSON.stringify(potentialJson));
                 }
-                AddAgentMessage("json identified: " + JSON.stringify(potentialJson));
             } catch { // return response if not a json
                 AddAgentMessage(completion);
             }
@@ -180,8 +193,14 @@ function AgentInterface(props) {
     }
     
     return(
-        <div className="chatBox">
+        <div className="chatBoxContainer" style={overrideChatStyle}>
+            <button className="minimize" onClick={(e) => setMinimized(!minimized)} style={overrideButtonStyle}>{minimizedIcon}</button>
             <h2>Nimbus Chat</h2>
+            <div className="chatBox">
+                {messageList}
+                <img src={loadingImage} hidden={!loadingSign}/>
+                <div ref={scrollRef}/>
+            </div>
             <form className="form" onSubmit={HandleChatSubmit}>
                 <textarea placeholder="Message" value={input} disabled={!chatEnabled} onKeyDown={async (e)=>{
                     if (e.key === 'Enter' && !e.shiftKey) {
@@ -190,11 +209,8 @@ function AgentInterface(props) {
                     }
                 }} 
                 onChange={(e) => setInput(e.target.value)}/>
-                <button type="submit">ASK</button>
+                <button type="submit">CHAT</button>
             </form>
-            {messageList}
-            <img src={loadingImage} hidden={!loadingSign}/>
-            <div ref={scrollRef}/>
         </div>
     );
 }
