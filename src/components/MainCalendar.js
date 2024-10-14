@@ -5,6 +5,7 @@ import { withAuthenticator } from '@aws-amplify/ui-react';
 import { generateClient } from 'aws-amplify/api';
 import awsconfig from '../amplifyconfiguration.json';
 import EventBox from './EventBox.js';
+import ParseDate from '../ParseDate.js';
 import '@aws-amplify/ui-react/styles.css';
 import '../styles/MainCalendar.css';
 
@@ -76,11 +77,14 @@ function MainCalendar() {
   useEffect(() => {
     let events = [];
     eventList.map((event) => {
+      let start = ParseDate(event.startDateTime);
+      let end = ParseDate(event.endDateTime);
+      let allDay = start.getHours() === 0 && start.getMinutes() === 0 && end.getHours() === 23 && end.getMinutes() === 59;
       events.push({
-        start: event.startDate,
-        end: event.endDate,
+        start: start,
+        end: end,
         title: event.name,
-        allDay: true,
+        allDay: allDay,
         id: event.id,
         key: event.id
       });
@@ -116,19 +120,6 @@ function MainCalendar() {
           eventList.map((event) => {
             return (<EventBox event={event} key={event.id} onDelete={()=>{setReset(!reset);}}/>);
         })}
-      </div>
-      <div className='ad-div'>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5524320471332797" crossorigin="anonymous"></script>
-        {/* Basic Ad */}
-        <ins class="adsbygoogle"
-            styles={{display:"block"}}
-            data-ad-client="ca-pub-5524320471332797"
-            data-ad-slot="1727885410"
-            data-ad-format="auto"
-            data-full-width-responsive="true"></ins>
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
       </div>
     </div>
   );

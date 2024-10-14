@@ -1,71 +1,14 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const onCreateDateAndTimeEvent = /* GraphQL */ `
-  subscription OnCreateDateAndTimeEvent(
-    $filter: ModelSubscriptionDateAndTimeEventFilterInput
-  ) {
-    onCreateDateAndTimeEvent(filter: $filter) {
-      id
-      startDate
-      endDate
-      startTime
-      endTime
-      name
-      desc
-      username
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onUpdateDateAndTimeEvent = /* GraphQL */ `
-  subscription OnUpdateDateAndTimeEvent(
-    $filter: ModelSubscriptionDateAndTimeEventFilterInput
-  ) {
-    onUpdateDateAndTimeEvent(filter: $filter) {
-      id
-      startDate
-      endDate
-      startTime
-      endTime
-      name
-      desc
-      username
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onDeleteDateAndTimeEvent = /* GraphQL */ `
-  subscription OnDeleteDateAndTimeEvent(
-    $filter: ModelSubscriptionDateAndTimeEventFilterInput
-  ) {
-    onDeleteDateAndTimeEvent(filter: $filter) {
-      id
-      startDate
-      endDate
-      startTime
-      endTime
-      name
-      desc
-      username
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
 export const onCreateDateEvent = /* GraphQL */ `
   subscription OnCreateDateEvent(
     $filter: ModelSubscriptionDateEventFilterInput
   ) {
     onCreateDateEvent(filter: $filter) {
       id
-      startDate
-      endDate
+      startDateTime
+      endDateTime
       name
       desc
       username
@@ -81,8 +24,8 @@ export const onUpdateDateEvent = /* GraphQL */ `
   ) {
     onUpdateDateEvent(filter: $filter) {
       id
-      startDate
-      endDate
+      startDateTime
+      endDateTime
       name
       desc
       username
@@ -98,8 +41,50 @@ export const onDeleteDateEvent = /* GraphQL */ `
   ) {
     onDeleteDateEvent(filter: $filter) {
       id
-      startDate
-      endDate
+      startDateTime
+      endDateTime
+      name
+      desc
+      username
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onCreateTodo = /* GraphQL */ `
+  subscription OnCreateTodo($filter: ModelSubscriptionTodoFilterInput) {
+    onCreateTodo(filter: $filter) {
+      id
+      priority
+      name
+      desc
+      username
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateTodo = /* GraphQL */ `
+  subscription OnUpdateTodo($filter: ModelSubscriptionTodoFilterInput) {
+    onUpdateTodo(filter: $filter) {
+      id
+      priority
+      name
+      desc
+      username
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteTodo = /* GraphQL */ `
+  subscription OnDeleteTodo($filter: ModelSubscriptionTodoFilterInput) {
+    onDeleteTodo(filter: $filter) {
+      id
+      priority
       name
       desc
       username

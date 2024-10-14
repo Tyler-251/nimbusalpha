@@ -23,29 +23,33 @@ export default function DateEventCreateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    startDate: "",
-    endDate: "",
+    startDateTime: "",
+    endDateTime: "",
     name: "",
     desc: "",
     username: "",
   };
-  const [startDate, setStartDate] = React.useState(initialValues.startDate);
-  const [endDate, setEndDate] = React.useState(initialValues.endDate);
+  const [startDateTime, setStartDateTime] = React.useState(
+    initialValues.startDateTime
+  );
+  const [endDateTime, setEndDateTime] = React.useState(
+    initialValues.endDateTime
+  );
   const [name, setName] = React.useState(initialValues.name);
   const [desc, setDesc] = React.useState(initialValues.desc);
   const [username, setUsername] = React.useState(initialValues.username);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    setStartDate(initialValues.startDate);
-    setEndDate(initialValues.endDate);
+    setStartDateTime(initialValues.startDateTime);
+    setEndDateTime(initialValues.endDateTime);
     setName(initialValues.name);
     setDesc(initialValues.desc);
     setUsername(initialValues.username);
     setErrors({});
   };
   const validations = {
-    startDate: [],
-    endDate: [],
+    startDateTime: [],
+    endDateTime: [],
     name: [],
     desc: [],
     username: [],
@@ -67,6 +71,23 @@ export default function DateEventCreateForm(props) {
     setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }));
     return validationResponse;
   };
+  const convertToLocal = (date) => {
+    const df = new Intl.DateTimeFormat("default", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      calendar: "iso8601",
+      numberingSystem: "latn",
+      hourCycle: "h23",
+    });
+    const parts = df.formatToParts(date).reduce((acc, part) => {
+      acc[part.type] = part.value;
+      return acc;
+    }, {});
+    return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+  };
   return (
     <Grid
       as="form"
@@ -76,8 +97,8 @@ export default function DateEventCreateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          startDate,
-          endDate,
+          startDateTime,
+          endDateTime,
           name,
           desc,
           username,
@@ -135,62 +156,64 @@ export default function DateEventCreateForm(props) {
       {...rest}
     >
       <TextField
-        label="Start date"
+        label="Start date time"
         isRequired={false}
         isReadOnly={false}
-        type="date"
-        value={startDate}
+        type="datetime-local"
+        value={startDateTime && convertToLocal(new Date(startDateTime))}
         onChange={(e) => {
-          let { value } = e.target;
+          let value =
+            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
           if (onChange) {
             const modelFields = {
-              startDate: value,
-              endDate,
+              startDateTime: value,
+              endDateTime,
               name,
               desc,
               username,
             };
             const result = onChange(modelFields);
-            value = result?.startDate ?? value;
+            value = result?.startDateTime ?? value;
           }
-          if (errors.startDate?.hasError) {
-            runValidationTasks("startDate", value);
+          if (errors.startDateTime?.hasError) {
+            runValidationTasks("startDateTime", value);
           }
-          setStartDate(value);
+          setStartDateTime(value);
         }}
-        onBlur={() => runValidationTasks("startDate", startDate)}
-        errorMessage={errors.startDate?.errorMessage}
-        hasError={errors.startDate?.hasError}
-        {...getOverrideProps(overrides, "startDate")}
+        onBlur={() => runValidationTasks("startDateTime", startDateTime)}
+        errorMessage={errors.startDateTime?.errorMessage}
+        hasError={errors.startDateTime?.hasError}
+        {...getOverrideProps(overrides, "startDateTime")}
       ></TextField>
       <TextField
-        label="End date"
+        label="End date time"
         isRequired={false}
         isReadOnly={false}
-        type="date"
-        value={endDate}
+        type="datetime-local"
+        value={endDateTime && convertToLocal(new Date(endDateTime))}
         onChange={(e) => {
-          let { value } = e.target;
+          let value =
+            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
           if (onChange) {
             const modelFields = {
-              startDate,
-              endDate: value,
+              startDateTime,
+              endDateTime: value,
               name,
               desc,
               username,
             };
             const result = onChange(modelFields);
-            value = result?.endDate ?? value;
+            value = result?.endDateTime ?? value;
           }
-          if (errors.endDate?.hasError) {
-            runValidationTasks("endDate", value);
+          if (errors.endDateTime?.hasError) {
+            runValidationTasks("endDateTime", value);
           }
-          setEndDate(value);
+          setEndDateTime(value);
         }}
-        onBlur={() => runValidationTasks("endDate", endDate)}
-        errorMessage={errors.endDate?.errorMessage}
-        hasError={errors.endDate?.hasError}
-        {...getOverrideProps(overrides, "endDate")}
+        onBlur={() => runValidationTasks("endDateTime", endDateTime)}
+        errorMessage={errors.endDateTime?.errorMessage}
+        hasError={errors.endDateTime?.hasError}
+        {...getOverrideProps(overrides, "endDateTime")}
       ></TextField>
       <TextField
         label="Name"
@@ -201,8 +224,8 @@ export default function DateEventCreateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              startDate,
-              endDate,
+              startDateTime,
+              endDateTime,
               name: value,
               desc,
               username,
@@ -229,8 +252,8 @@ export default function DateEventCreateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              startDate,
-              endDate,
+              startDateTime,
+              endDateTime,
               name,
               desc: value,
               username,
@@ -257,8 +280,8 @@ export default function DateEventCreateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              startDate,
-              endDate,
+              startDateTime,
+              endDateTime,
               name,
               desc,
               username: value,

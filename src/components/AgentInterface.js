@@ -9,9 +9,12 @@ import * as mutations from '../graphql/mutations';
 import * as queries from '../graphql/queries';
 import { generateClient } from "aws-amplify/api";
 
+const AGENT_ID = "QLNAQZAVCZ";
+const ALIAS_ID = "EYNLEFW5FB";
+
 const UserMessageBox = ({text}) => {
     return(
-        <div className="userMessageBox">
+        <div className="userMessageBox" key={text}>
             {text}
         </div>
     );
@@ -19,7 +22,7 @@ const UserMessageBox = ({text}) => {
 
 const AgentMessageBox = ({text}) => {
     return(
-        <div className="agentMessageBox">
+        <div className="agentMessageBox" key={text}>
             {text}
         </div>
     );
@@ -91,31 +94,135 @@ function AgentInterface(props) {
             "author": "agent",
             "text": text
         }
-        setMessageList((prevItems) => [...prevItems, <AgentMessageBox text={text}/>]);
+        setMessageList((prevItems) => [...prevItems, <AgentMessageBox text={text} key={text}/>]);
     }
     function AddUserMessage(text) {
         let messageObject = {
             "author": "user",
             "text": text
         }
-        setMessageList((prevItems) => [...prevItems, <UserMessageBox text={text}/>]);
+        setMessageList((prevItems) => [...prevItems, <UserMessageBox text={text} key={text}/>]);
     }
     function AddCreateEventConfirmations(events) {
         for (const event of events) {
-            setMessageList((prevItems) => [...prevItems, <CreateConfirmBox client={graphQLClient} event={event} user={userInfo}/>]);
+            setMessageList((prevItems) => [...prevItems, <CreateConfirmBox client={graphQLClient} event={event} key={event.toString()}/>]);
         }
     }
     const CreateConfirmBox = ({event}) => {
-        const [pendingTitle, setPendingTitle] = useState(event["title"]);
-        const [pendingDate, setPendingDate] = useState(event["startDate"]);
+        const [pendingTitle, setPendingTitle] = useState("");
+        const [pendingStartDate, setPendingStartDate] = useState("");
+        const [startTime, setStartTime] = useState("");
+        const [pendingEndDate, setPendingEndDate] = useState("");
+        const [pendingDesc, setPendingDesc] = useState("");
+        const [endTime, setEndTime] = useState();
+        const [allDay, setAllDay] = useState(false);
+        const [usesEndDate, setUsesEndDate] = useState(false);
+        const descRef = useRef(null);
+        const descButtonRef = useRef(null);
+        const startTimeRef = useRef(null);
+        const endDateRef = useRef(null);
+        const endTimeRef = useRef(null);
+        
+        useEffect(()=> {
+            if (event) {
+                let eventStartDate = "";
+                let eventStartTime = "";
+                let eventEndDate = "";
+                let eventEndTime = "";
+
+                if ("title" in event) {
+                    setPendingTitle(event["title"]);
+                }
+                if ("startDateTime" in event) {
+                    eventStartDate = event["startDateTime"].split("T")[0];
+                    eventStartTime = event["startDateTime"].split("T")[1];
+    
+                    setPendingStartDate(eventStartDate);
+                    setStartTime(eventStartTime);
+                }
+                if ("endDateTime" in event) {
+                    eventEndDate = event["endDateTime"].split("T")[0];
+                    eventEndTime = event["endDateTime"].split("T")[1];
+    
+                    setPendingEndDate(eventEndDate);
+                    setEndTime(eventEndTime);
+                }
+                console.log("start" + startTime);
+                console.log(endTime);
+
+                descButtonRef.current.style.display = "block";
+                descRef.current.style.display = "none";
+                if ("desc" in event) {
+                    setPendingDesc(event["desc"]);
+                }
+                
+                if (eventStartDate == eventEndDate) {
+                    setUsesEndDate(false);
+                } else {
+                    setUsesEndDate(true);
+                }
+
+                if (eventStartTime == "00:00" && eventEndTime == "23:59") {
+                    setAllDay(true);
+                } else {
+                    setAllDay(false);
+                }
+            }
+        }, []); //initialize state with event data
+
+        useEffect(()=>{
+            if (pendingDesc != "") {
+                AddDescription();
+            }
+        }, [pendingDesc]); //auto-add description if it exists
+
+        useEffect(()=>{
+            if (allDay) {
+                startTimeRef.current.style.display = "none";
+                endTimeRef.current.style.display = "none";
+            } else {
+                startTimeRef.current.style.display = "block";
+                endTimeRef.current.style.display = "block";
+            }
+            if (!usesEndDate) {
+                endDateRef.current.disabled = true;
+            } else {
+                endDateRef.current.disabled = false;
+            }
+        }, [allDay, usesEndDate]); //toggles display of time inputs
+
+        function AddDescription() {
+            descButtonRef.current.style.display = "none";
+            descRef.current.style.display = "block";
+        }
+
+        function RemoveDescription() {
+            descButtonRef.current.style.display = "block";
+            descRef.current.style.display = "none";
+        }
+
         async function ConfirmEvent() {
+            if (pendingTitle == "" || pendingStartDate == "") return;
+            let workingStartDate = pendingStartDate;
+            let workingEndDate = pendingEndDate;
+            let workingStartTime = startTime;
+            let workingEndTime = endTime;
+
+            if (allDay) {
+                workingStartTime = "00:00";
+                workingEndTime = "23:59";
+            }
+            if (!usesEndDate) {
+                workingEndDate = workingStartDate;
+            }
+
             let newEvent = await graphQLClient.graphql({
                 query: mutations.createDateEvent,
                 variables: {
                     input: {
                         name: pendingTitle,
-                        startDate: pendingDate,
-                        endDate: pendingDate,
+                        startDateTime: pendingStartDate + "T" + startTime + "Z",
+                        endDateTime: pendingEndDate + "T" + endTime + "Z",
                         username: userInfo.sub
                     }
                 }
@@ -124,11 +231,33 @@ function AgentInterface(props) {
         }
         return(
             <div className="createConfirmBox">
-                <div>
+                <div className="confirmContent">
                     <h3>Title:</h3>
                     <input type="text" value={pendingTitle} onChange={(e) => setPendingTitle(e.target.value)}/>
-                    <h4>Date:</h4>
-                    <input type="date" value={pendingDate} onChange={(e) => setPendingDate(e.target.value)}/>
+                    <h3>Date:</h3>
+                    <div className="checks" style={{display: "flex"}}>
+                        <p>All Day:</p>
+                        <input type="checkbox" checked={allDay} onChange={(e)=> setAllDay(e.target.checked)}/>
+                        <p>Multiple Days:</p>
+                        <input type="checkbox" checked={usesEndDate} onChange={(e)=> setUsesEndDate(e.target.checked)}/>
+                    </div>
+                    <div className="startDateTimeDiv">
+                        <input className="startDateInput" type="date" value={pendingStartDate} onChange={(e) => setPendingStartDate(e.target.value)}/>
+                        <input className="startTimeInput" type="time" value={startTime} onChange={(e)=>setStartTime(e.target.value)} ref={startTimeRef}/>
+                    </div>
+                    <div className="endDateTimeDiv">
+                        <input className="endDateInput" type="date" value={pendingEndDate} onChange={(e) => setPendingEndDate(e.target.value)} ref={endDateRef}/>
+                        <div ref={endTimeRef} className="endTimeDiv">
+                            <input className="endTimeInput" type="time" value={endTime} onChange={(e)=>setEndTime(e.target.value)}/>
+                        </div>
+                    </div>
+                    <button className="addDescButton" ref={descButtonRef} onClick={AddDescription} >Add Description</button>
+                    <textarea className="descTextArea" value={pendingDesc} onChange={(e)=>{
+                        if (e.target.value == "") {
+                            RemoveDescription();
+                        }
+                        setPendingDesc(e.target.value);
+                    }} ref={descRef}/>
                 </div>
                 <div className="buttons">
                     <button id="confirm-button" onClick={ConfirmEvent}>Confirm</button>
@@ -220,8 +349,8 @@ function AgentInterface(props) {
         let prompt = "Today's date: " + today + ", " + dayName + "\n\n a list of user's events: " + JSON.stringify(props.events) + "\n\nUser input: " + userInput;
 
         const payload = {
-            agentId: 'QLNAQZAVCZ',
-            agentAliasId: '81N5PCIIIZ',
+            agentId: AGENT_ID,
+            agentAliasId: ALIAS_ID,
             sessionId: sessionId,
             inputText: prompt
         }

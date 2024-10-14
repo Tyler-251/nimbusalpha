@@ -1,58 +1,12 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const getDateAndTimeEvent = /* GraphQL */ `
-  query GetDateAndTimeEvent($id: ID!) {
-    getDateAndTimeEvent(id: $id) {
-      id
-      startDate
-      endDate
-      startTime
-      endTime
-      name
-      desc
-      username
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const listDateAndTimeEvents = /* GraphQL */ `
-  query ListDateAndTimeEvents(
-    $filter: ModelDateAndTimeEventFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listDateAndTimeEvents(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        startDate
-        endDate
-        startTime
-        endTime
-        name
-        desc
-        username
-        createdAt
-        updatedAt
-        __typename
-      }
-      nextToken
-      __typename
-    }
-  }
-`;
 export const getDateEvent = /* GraphQL */ `
   query GetDateEvent($id: ID!) {
     getDateEvent(id: $id) {
       id
-      startDate
-      endDate
+      startDateTime
+      endDateTime
       name
       desc
       username
@@ -71,8 +25,44 @@ export const listDateEvents = /* GraphQL */ `
     listDateEvents(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        startDate
-        endDate
+        startDateTime
+        endDateTime
+        name
+        desc
+        username
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const getTodo = /* GraphQL */ `
+  query GetTodo($id: ID!) {
+    getTodo(id: $id) {
+      id
+      priority
+      name
+      desc
+      username
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listTodos = /* GraphQL */ `
+  query ListTodos(
+    $filter: ModelTodoFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listTodos(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        priority
         name
         desc
         username

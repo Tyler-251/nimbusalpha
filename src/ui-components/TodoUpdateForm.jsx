@@ -9,13 +9,13 @@ import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { getDateEvent } from "../graphql/queries";
-import { updateDateEvent } from "../graphql/mutations";
+import { getTodo } from "../graphql/queries";
+import { updateTodo } from "../graphql/mutations";
 const client = generateClient();
-export default function DateEventUpdateForm(props) {
+export default function TodoUpdateForm(props) {
   const {
     id: idProp,
-    dateEvent: dateEventModelProp,
+    todo: todoModelProp,
     onSuccess,
     onError,
     onSubmit,
@@ -25,53 +25,44 @@ export default function DateEventUpdateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    startDateTime: "",
-    endDateTime: "",
+    priority: "",
     name: "",
     desc: "",
     username: "",
   };
-  const [startDateTime, setStartDateTime] = React.useState(
-    initialValues.startDateTime
-  );
-  const [endDateTime, setEndDateTime] = React.useState(
-    initialValues.endDateTime
-  );
+  const [priority, setPriority] = React.useState(initialValues.priority);
   const [name, setName] = React.useState(initialValues.name);
   const [desc, setDesc] = React.useState(initialValues.desc);
   const [username, setUsername] = React.useState(initialValues.username);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    const cleanValues = dateEventRecord
-      ? { ...initialValues, ...dateEventRecord }
+    const cleanValues = todoRecord
+      ? { ...initialValues, ...todoRecord }
       : initialValues;
-    setStartDateTime(cleanValues.startDateTime);
-    setEndDateTime(cleanValues.endDateTime);
+    setPriority(cleanValues.priority);
     setName(cleanValues.name);
     setDesc(cleanValues.desc);
     setUsername(cleanValues.username);
     setErrors({});
   };
-  const [dateEventRecord, setDateEventRecord] =
-    React.useState(dateEventModelProp);
+  const [todoRecord, setTodoRecord] = React.useState(todoModelProp);
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
         ? (
             await client.graphql({
-              query: getDateEvent.replaceAll("__typename", ""),
+              query: getTodo.replaceAll("__typename", ""),
               variables: { id: idProp },
             })
-          )?.data?.getDateEvent
-        : dateEventModelProp;
-      setDateEventRecord(record);
+          )?.data?.getTodo
+        : todoModelProp;
+      setTodoRecord(record);
     };
     queryData();
-  }, [idProp, dateEventModelProp]);
-  React.useEffect(resetStateValues, [dateEventRecord]);
+  }, [idProp, todoModelProp]);
+  React.useEffect(resetStateValues, [todoRecord]);
   const validations = {
-    startDateTime: [],
-    endDateTime: [],
+    priority: [],
     name: [],
     desc: [],
     username: [],
@@ -93,23 +84,6 @@ export default function DateEventUpdateForm(props) {
     setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }));
     return validationResponse;
   };
-  const convertToLocal = (date) => {
-    const df = new Intl.DateTimeFormat("default", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      calendar: "iso8601",
-      numberingSystem: "latn",
-      hourCycle: "h23",
-    });
-    const parts = df.formatToParts(date).reduce((acc, part) => {
-      acc[part.type] = part.value;
-      return acc;
-    }, {});
-    return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
-  };
   return (
     <Grid
       as="form"
@@ -119,8 +93,7 @@ export default function DateEventUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          startDateTime: startDateTime ?? null,
-          endDateTime: endDateTime ?? null,
+          priority: priority ?? null,
           name: name ?? null,
           desc: desc ?? null,
           username: username ?? null,
@@ -154,10 +127,10 @@ export default function DateEventUpdateForm(props) {
             }
           });
           await client.graphql({
-            query: updateDateEvent.replaceAll("__typename", ""),
+            query: updateTodo.replaceAll("__typename", ""),
             variables: {
               input: {
-                id: dateEventRecord.id,
+                id: todoRecord.id,
                 ...modelFields,
               },
             },
@@ -172,68 +145,39 @@ export default function DateEventUpdateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "DateEventUpdateForm")}
+      {...getOverrideProps(overrides, "TodoUpdateForm")}
       {...rest}
     >
       <TextField
-        label="Start date time"
+        label="Priority"
         isRequired={false}
         isReadOnly={false}
-        type="datetime-local"
-        value={startDateTime && convertToLocal(new Date(startDateTime))}
+        type="number"
+        step="any"
+        value={priority}
         onChange={(e) => {
-          let value =
-            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
           if (onChange) {
             const modelFields = {
-              startDateTime: value,
-              endDateTime,
+              priority: value,
               name,
               desc,
               username,
             };
             const result = onChange(modelFields);
-            value = result?.startDateTime ?? value;
+            value = result?.priority ?? value;
           }
-          if (errors.startDateTime?.hasError) {
-            runValidationTasks("startDateTime", value);
+          if (errors.priority?.hasError) {
+            runValidationTasks("priority", value);
           }
-          setStartDateTime(value);
+          setPriority(value);
         }}
-        onBlur={() => runValidationTasks("startDateTime", startDateTime)}
-        errorMessage={errors.startDateTime?.errorMessage}
-        hasError={errors.startDateTime?.hasError}
-        {...getOverrideProps(overrides, "startDateTime")}
-      ></TextField>
-      <TextField
-        label="End date time"
-        isRequired={false}
-        isReadOnly={false}
-        type="datetime-local"
-        value={endDateTime && convertToLocal(new Date(endDateTime))}
-        onChange={(e) => {
-          let value =
-            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
-          if (onChange) {
-            const modelFields = {
-              startDateTime,
-              endDateTime: value,
-              name,
-              desc,
-              username,
-            };
-            const result = onChange(modelFields);
-            value = result?.endDateTime ?? value;
-          }
-          if (errors.endDateTime?.hasError) {
-            runValidationTasks("endDateTime", value);
-          }
-          setEndDateTime(value);
-        }}
-        onBlur={() => runValidationTasks("endDateTime", endDateTime)}
-        errorMessage={errors.endDateTime?.errorMessage}
-        hasError={errors.endDateTime?.hasError}
-        {...getOverrideProps(overrides, "endDateTime")}
+        onBlur={() => runValidationTasks("priority", priority)}
+        errorMessage={errors.priority?.errorMessage}
+        hasError={errors.priority?.hasError}
+        {...getOverrideProps(overrides, "priority")}
       ></TextField>
       <TextField
         label="Name"
@@ -244,8 +188,7 @@ export default function DateEventUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              startDateTime,
-              endDateTime,
+              priority,
               name: value,
               desc,
               username,
@@ -272,8 +215,7 @@ export default function DateEventUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              startDateTime,
-              endDateTime,
+              priority,
               name,
               desc: value,
               username,
@@ -300,8 +242,7 @@ export default function DateEventUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              startDateTime,
-              endDateTime,
+              priority,
               name,
               desc,
               username: value,
@@ -330,7 +271,7 @@ export default function DateEventUpdateForm(props) {
             event.preventDefault();
             resetStateValues();
           }}
-          isDisabled={!(idProp || dateEventModelProp)}
+          isDisabled={!(idProp || todoModelProp)}
           {...getOverrideProps(overrides, "ResetButton")}
         ></Button>
         <Flex
@@ -342,7 +283,7 @@ export default function DateEventUpdateForm(props) {
             type="submit"
             variation="primary"
             isDisabled={
-              !(idProp || dateEventModelProp) ||
+              !(idProp || todoModelProp) ||
               Object.values(errors).some((e) => e?.hasError)
             }
             {...getOverrideProps(overrides, "SubmitButton")}

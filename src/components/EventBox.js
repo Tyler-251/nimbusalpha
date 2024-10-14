@@ -42,8 +42,8 @@ const EventBox = (props) => {
     return (
         <div style={boxStyles} id={event.id}>
             <p><b>{event.name}</b></p>
-            <p>from {event.startDate}</p>
-            <p>to {event.endDate}</p>
+            <p>from {event.startDateTime}</p>
+            <p>to {event.endDateTime}</p>
             <button style={xButtonStyles} onClick={handleDeleteButtonClick}>X</button>
         </div>
     );

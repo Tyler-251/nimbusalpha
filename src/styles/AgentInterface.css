@@ -60,19 +60,84 @@
     padding: 15px 20px 15px 15px;
     border-radius: 30px 30px 30px 0px;
 }
-
+/* #region .createConfirmBox */
 .createConfirmBox {
     background-color: rgb(255, 211, 129);
     padding: 10px;
     margin: 10px;
 }
 
+.startDateTimeDiv {
+    padding-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: rgb(255, 197, 91);
+}
+
+.startDateTimeDiv input {
+    background-color: rgb(245, 180, 60);
+    color: white;
+    font-weight: 700;
+    border: none;
+}
+
+.startDateInput {
+    width: 120px;
+}
+
+.startTimeInput {
+    width: 110px;
+    margin-left: 30px;
+}
+
+.endDateTimeDiv {
+    padding-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: rgb(255, 197, 91);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.endDateInput {
+    width: 120px;
+}
+
+.endDateInput:disabled {
+    color: rgb(255, 197, 91);
+}
+
+.endTimeInput {
+    width: 110px;
+    margin-left: 30px;
+}
+
+.endDateTimeDiv input {
+    background-color: rgb(245, 180, 60);
+    color: white;
+    font-weight: 700;
+    border: none;
+}
+
+.endDateTimeDiv button {
+    background-color: rgb(245, 180, 60);
+    color: white;
+    font-weight: 700;
+    border: none;
+}
+
+.endTimeDiv {
+    display: flex;
+}
+
 .createConfirmBox h3 {
     margin: auto;
 }
 
-.createConfirmBox h4 {
-    margin: auto;
+.createConfirmBox h3:last-of-type {
+    margin-top: 10px;
 }
 
 .createConfirmBox .buttons {
@@ -102,6 +167,37 @@
 .createConfirmBox #confirm-button:hover {
     background-color: rgb(255, 123, 0);
 }
+
+.confirmContext {
+    flex-wrap: nowrap;
+}
+
+.createConfirmBox input {
+    display: block;
+}
+
+.checks * {
+    margin-top: 0;  
+    margin-bottom: 0;
+}
+
+.descTextArea {
+    max-width: 100%;
+    min-width: 100%;
+    min-height: 60px;
+    max-height: 150px;
+    margin-bottom: 10px;
+}
+
+.addDescButton {
+    background-color: orange;
+    color: white;
+    font-weight: 700;
+    border: none;
+}
+
+
+/* #endregion */
 
 .chatBoxContainer form {
     width: 100%;

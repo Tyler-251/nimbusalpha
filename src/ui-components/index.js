@@ -4,8 +4,8 @@
  * Any changes to this file will be overwritten when running amplify pull. *
  **************************************************************************/
 
-export { default as DateAndTimeEventCreateForm } from "./DateAndTimeEventCreateForm";
-export { default as DateAndTimeEventUpdateForm } from "./DateAndTimeEventUpdateForm";
 export { default as DateEventCreateForm } from "./DateEventCreateForm";
 export { default as DateEventUpdateForm } from "./DateEventUpdateForm";
+export { default as TodoCreateForm } from "./TodoCreateForm";
+export { default as TodoUpdateForm } from "./TodoUpdateForm";
 export { default as studioTheme } from "./studioTheme";

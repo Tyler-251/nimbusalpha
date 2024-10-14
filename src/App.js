@@ -7,17 +7,19 @@ import './App.css';
 
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import MainCalendar from './components/MainCalendar.js'
-import AgentRuntime from './components/AgentRuntime.js';
+import Header from './components/Header.js'
 
 Amplify.configure(awsconfig); 
 
 function App() {
 
   return (
+
     <Router>
+      <Header/>
       <Routes>
         <Route index element={<MainCalendar/>}/>
-        <Route path="agent" element={<AgentRuntime/>}/>
+        
       </Routes>
     </Router>
   );

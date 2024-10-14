@@ -21,37 +21,34 @@ export declare type ValidationResponse = {
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
-export declare type DateEventCreateFormInputValues = {
-    startDateTime?: string;
-    endDateTime?: string;
+export declare type TodoCreateFormInputValues = {
+    priority?: number;
     name?: string;
     desc?: string;
     username?: string;
 };
-export declare type DateEventCreateFormValidationValues = {
-    startDateTime?: ValidationFunction<string>;
-    endDateTime?: ValidationFunction<string>;
+export declare type TodoCreateFormValidationValues = {
+    priority?: ValidationFunction<number>;
     name?: ValidationFunction<string>;
     desc?: ValidationFunction<string>;
     username?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
-export declare type DateEventCreateFormOverridesProps = {
-    DateEventCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
-    startDateTime?: PrimitiveOverrideProps<TextFieldProps>;
-    endDateTime?: PrimitiveOverrideProps<TextFieldProps>;
+export declare type TodoCreateFormOverridesProps = {
+    TodoCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
+    priority?: PrimitiveOverrideProps<TextFieldProps>;
     name?: PrimitiveOverrideProps<TextFieldProps>;
     desc?: PrimitiveOverrideProps<TextFieldProps>;
     username?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
-export declare type DateEventCreateFormProps = React.PropsWithChildren<{
-    overrides?: DateEventCreateFormOverridesProps | undefined | null;
+export declare type TodoCreateFormProps = React.PropsWithChildren<{
+    overrides?: TodoCreateFormOverridesProps | undefined | null;
 } & {
     clearOnSuccess?: boolean;
-    onSubmit?: (fields: DateEventCreateFormInputValues) => DateEventCreateFormInputValues;
-    onSuccess?: (fields: DateEventCreateFormInputValues) => void;
-    onError?: (fields: DateEventCreateFormInputValues, errorMessage: string) => void;
-    onChange?: (fields: DateEventCreateFormInputValues) => DateEventCreateFormInputValues;
-    onValidate?: DateEventCreateFormValidationValues;
+    onSubmit?: (fields: TodoCreateFormInputValues) => TodoCreateFormInputValues;
+    onSuccess?: (fields: TodoCreateFormInputValues) => void;
+    onError?: (fields: TodoCreateFormInputValues, errorMessage: string) => void;
+    onChange?: (fields: TodoCreateFormInputValues) => TodoCreateFormInputValues;
+    onValidate?: TodoCreateFormValidationValues;
 } & React.CSSProperties>;
-export default function DateEventCreateForm(props: DateEventCreateFormProps): React.ReactElement;
+export default function TodoCreateForm(props: TodoCreateFormProps): React.ReactElement;

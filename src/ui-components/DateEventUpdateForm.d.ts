@@ -22,15 +22,15 @@ export declare type ValidationResponse = {
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type DateEventUpdateFormInputValues = {
-    startDate?: string;
-    endDate?: string;
+    startDateTime?: string;
+    endDateTime?: string;
     name?: string;
     desc?: string;
     username?: string;
 };
 export declare type DateEventUpdateFormValidationValues = {
-    startDate?: ValidationFunction<string>;
-    endDate?: ValidationFunction<string>;
+    startDateTime?: ValidationFunction<string>;
+    endDateTime?: ValidationFunction<string>;
     name?: ValidationFunction<string>;
     desc?: ValidationFunction<string>;
     username?: ValidationFunction<string>;
@@ -38,8 +38,8 @@ export declare type DateEventUpdateFormValidationValues = {
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type DateEventUpdateFormOverridesProps = {
     DateEventUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
-    startDate?: PrimitiveOverrideProps<TextFieldProps>;
-    endDate?: PrimitiveOverrideProps<TextFieldProps>;
+    startDateTime?: PrimitiveOverrideProps<TextFieldProps>;
+    endDateTime?: PrimitiveOverrideProps<TextFieldProps>;
     name?: PrimitiveOverrideProps<TextFieldProps>;
     desc?: PrimitiveOverrideProps<TextFieldProps>;
     username?: PrimitiveOverrideProps<TextFieldProps>;
