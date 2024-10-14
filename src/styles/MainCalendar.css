@@ -1,6 +1,8 @@
 .calendar-body {
     background-color: rgb(56, 57, 73);
     color: white;
+    width: 70%;
+    padding: 15px 20px 15px 15px;
 }
 
 .adsbygoogle {

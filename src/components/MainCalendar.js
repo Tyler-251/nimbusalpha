@@ -101,19 +101,11 @@ function MainCalendar() {
 
   return (
     <div className='calendar-body'>
-      <div style={{display: "flex"}}>
-        <h1>
-          Welcome, {userInfo.name || "..."}!
-        </h1>
-        <button type='button' onClick={handleSignOut}>Sign Out</button>
-      </div>
-        
       <FullCalendar 
         plugins={[dayGrid]}
         initialView='dayGridMonth'
         events={calendarEventList}
         />
-      <AgentInterface events={eventList} callback={()=>setReset(!reset)}/>
       <h3>My Events:</h3>
       <div style={{color: "white", display: "flex", backgroundColor: "#333333", padding: "10px", width: "100%", marginBottom: "20px", flexWrap: "wrap", justifyContent: "center"}}>
         {

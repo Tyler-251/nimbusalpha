@@ -286,7 +286,7 @@ function AgentInterface(props) {
             }
           });
         }
-        props.callback();
+        // props.callback();
     }
     
     async function ModifyEvents(input) {
@@ -305,7 +305,7 @@ function AgentInterface(props) {
             }
           });
         }
-        props.callback();
+        // props.callback();
     }
 //#endregion 
     async function HandleChatSubmit(event) {
@@ -381,7 +381,7 @@ function AgentInterface(props) {
                     }
                 }
             } catch (err) { // return response if not a json
-                AddAgentMessage(completion);
+                AddAgentMessage("Sorry, I encountered an error. Please try again.");
             }
         } catch (err) { // failsafe TODO
             AddAgentMessage(err.message);
@@ -393,7 +393,6 @@ function AgentInterface(props) {
     
     return(
         <div className="chatBoxContainer" style={overrideChatStyle}>
-            <button className="minimize" onClick={(e) => setMinimized(!minimized)} style={overrideButtonStyle}>{minimizedIcon}</button>
             <h2>Nimbus Chat</h2>
             <div className="chatBox">
                 {messageList}
