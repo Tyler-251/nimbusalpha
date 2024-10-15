@@ -1,0 +1,16 @@
+type DateEvent @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  startDateTime: AWSDateTime
+  endDateTime: AWSDateTime
+  name: String
+  desc: String
+  username: String
+}
+
+type Todo @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  priority: Int
+  name: String
+  desc: String
+  username: String
+}

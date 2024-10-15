@@ -1,0 +1,6 @@
+{
+  "AppSyncApiName": "nimbusalpha",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthModeLastUpdated": "2024-09-27T01:05:22.768Z"
+}

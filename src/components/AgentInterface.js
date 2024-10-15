@@ -221,8 +221,9 @@ function AgentInterface(props) {
                 variables: {
                     input: {
                         name: pendingTitle,
-                        startDateTime: pendingStartDate + "T" + startTime + "Z",
-                        endDateTime: pendingEndDate + "T" + endTime + "Z",
+                        startDateTime: workingStartDate + "T" + workingStartTime + "Z",
+                        endDateTime: workingEndDate + "T" + workingEndTime + "Z",
+                        desc: pendingDesc,
                         username: userInfo.sub
                     }
                 }

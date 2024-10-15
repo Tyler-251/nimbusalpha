@@ -18,28 +18,24 @@
     color: black;
     background-color: #ebe6e3;
 
-
     width: 100%;
-    height: 78%;
-
+    height: 79.5%;
     padding: 10px;
 
     overflow-y: scroll;
     overflow-x: hidden;
-    border-radius: 10px 10px 0 0;
 }
 
 .chatBoxContainer h2 {
-    padding: 30px 35px 5px;
-    color: rgb(71, 71, 71);
+    padding-top: 15px;
+    padding-bottom: 10px;
+    color: rgb(255, 255, 255);
 
     margin: auto;
     margin-bottom: -5px;
     font-weight: 800;
     font-size: 30px;
     width: fit-content;
-    background-image: url("../img/cloud.png");
-    background-size: cover;
 
 }
 

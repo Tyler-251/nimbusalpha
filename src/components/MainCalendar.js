@@ -11,8 +11,6 @@ import '../styles/MainCalendar.css';
 
 import {InvokeAgentCommand, BedrockAgentRuntimeClient} from '@aws-sdk/client-bedrock-agent-runtime';
 
-import AgentInterface from "./AgentInterface.js"
-
 import * as mutations from '../graphql/mutations.js';
 import * as queries from '../graphql/queries.js';
 
@@ -35,6 +33,7 @@ function MainCalendar() {
 
   const [eventList, setEventList] = useState([]);
   const [calendarEventList, setCalendarEventList] = useState([]);
+  const [calendarMode, setCalendarMode] = useState('dayGridMonth');
 
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('<Response>');
@@ -103,7 +102,7 @@ function MainCalendar() {
     <div className='calendar-body'>
       <FullCalendar 
         plugins={[dayGrid]}
-        initialView='dayGridMonth'
+        initialView={calendarMode}
         events={calendarEventList}
         />
       <h3>My Events:</h3>
