@@ -9,8 +9,8 @@ import * as mutations from '../graphql/mutations';
 import * as queries from '../graphql/queries';
 import { generateClient } from "aws-amplify/api";
 
-const AGENT_ID = "QLNAQZAVCZ";
-const ALIAS_ID = "EYNLEFW5FB";
+const AGENT_ID = "QLNAQZAVCZ"; // Dont touch
+const ALIAS_ID = "RTU9FGSVGP"; // Update this with your alias id
 
 const UserMessageBox = ({text}) => {
     return(
@@ -71,7 +71,7 @@ function AgentInterface(props) {
     },[]);
 
     useEffect(()=>{
-        scrollRef.current?.scrollIntoView({behavior: "smooth"});
+        scrollRef.current?.scrollIntoView({behavior: "smooth", block: "end"});
         chatRef.current?.focus();
         chatRef.current?.setSelectionRange(0,0);
     }, [messageList])
@@ -94,21 +94,25 @@ function AgentInterface(props) {
             "author": "agent",
             "text": text
         }
-        setMessageList((prevItems) => [...prevItems, <AgentMessageBox text={text} key={text}/>]);
+        setMessageList((prevItems) => [...prevItems, <AgentMessageBox text={text} key={messageList.length}/>]);
     }
     function AddUserMessage(text) {
         let messageObject = {
             "author": "user",
             "text": text
         }
-        setMessageList((prevItems) => [...prevItems, <UserMessageBox text={text} key={text}/>]);
+        setMessageList((prevItems) => [...prevItems, <UserMessageBox text={text} key={messageList.length}/>]);
     }
     function AddCreateEventConfirmations(events) {
         for (const event of events) {
-            setMessageList((prevItems) => [...prevItems, <CreateConfirmBox client={graphQLClient} event={event} key={event.toString()}/>]);
+            setMessageList((prevItems) => [...prevItems, <CreateConfirmBox event={event} key={messageList.length}/>]);
         }
     }
-    const CreateConfirmBox = ({event}) => {
+    function RemoveMessage(indexKey) {
+        let newMessageList = messageList.filter((message) => message.key != indexKey);
+        setMessageList(newMessageList);
+    }
+    const CreateConfirmBox = ({event, key}) => {
         const [pendingTitle, setPendingTitle] = useState("");
         const [pendingStartDate, setPendingStartDate] = useState("");
         const [startTime, setStartTime] = useState("");
@@ -230,8 +234,11 @@ function AgentInterface(props) {
             });
             props.callback();
         }
+        function CancelEvent() {
+            RemoveMessage(key);
+        }
         return(
-            <div className="createConfirmBox">
+            <div className="createConfirmBox" key={key}>
                 <div className="confirmContent">
                     <h3>Title:</h3>
                     <input type="text" value={pendingTitle} onChange={(e) => setPendingTitle(e.target.value)}/>
@@ -262,7 +269,7 @@ function AgentInterface(props) {
                 </div>
                 <div className="buttons">
                     <button id="confirm-button" onClick={ConfirmEvent}>Confirm</button>
-                    <button id="cancel-button">Cancel</button>
+                    <button id="cancel-button" onClick={()=>{CancelEvent(key)}}>Cancel</button>
                 </div>
             </div>
         );
@@ -382,7 +389,7 @@ function AgentInterface(props) {
                     }
                 }
             } catch (err) { // return response if not a json
-                AddAgentMessage("Sorry, I encountered an error. Please try again.");
+                AddAgentMessage(completion);
             }
         } catch (err) { // failsafe TODO
             AddAgentMessage(err.message);

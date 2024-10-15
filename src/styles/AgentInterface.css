@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 .chatBoxContainer {
-    width: 30%;
+    width: 35%;
+    max-width: 500px;
+    min-width: 400px;
     height: calc(100vh - 65px);
     background-color: rgb(56, 57, 73);
     position: sticky;
@@ -19,7 +21,7 @@
     background-color: #ebe6e3;
 
     width: 100%;
-    height: 79.5%;
+    height: calc(100vh - 200px);
     padding: 10px;
 
     overflow-y: scroll;
