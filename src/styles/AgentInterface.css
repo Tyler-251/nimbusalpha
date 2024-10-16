@@ -229,6 +229,7 @@
 
 .chatBoxContainer form {
     width: 100%;
+    display: flex;
 }
 
 .chatBoxContainer form textarea {
@@ -253,7 +254,7 @@
     font-size: 15px;
 
     border: none;
-    position: fixed;
+    position: inherit;
     cursor: pointer;
 }
 
