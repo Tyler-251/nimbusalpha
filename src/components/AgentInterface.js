@@ -1,5 +1,5 @@
 import { withAuthenticator } from "@aws-amplify/ui-react"
-import { signOut, fetchUserAttributes, getCurrentUser, fetchAuthSession } from '@aws-amplify/auth';
+import { fetchUserAttributes, fetchAuthSession } from '@aws-amplify/auth';
 import {InvokeAgentCommand, BedrockAgentRuntimeClient} from '@aws-sdk/client-bedrock-agent-runtime';
 import "../styles/AgentInterface.css"
 import { useEffect, useState, useRef } from "react";
@@ -14,7 +14,7 @@ const ALIAS_ID = "RTU9FGSVGP"; // Update this with your alias id
 
 const UserMessageBox = ({text}) => {
     return(
-        <div className="userMessageBox" key={text}>
+        <div className="userMessageBox">
             {text}
         </div>
     );
@@ -22,7 +22,7 @@ const UserMessageBox = ({text}) => {
 
 const AgentMessageBox = ({text}) => {
     return(
-        <div className="agentMessageBox" key={text}>
+        <div className="agentMessageBox">
             {text}
         </div>
     );
@@ -34,7 +34,7 @@ const minimizedStyle = {right: "-380px"}
 const minimizedButtonStyle = {transform: "translate(-40px, 30px)"}
 
 
-function AgentInterface(props) {
+const AgentInterface = (props) => {
     const [messageList, setMessageList] = useState([<AgentMessageBox text="Hello, how can I help you today?"/>]);
     const [input, setInput] = useState(""); //chatbox input
     const [client, setClient] = useState(); //agent client
@@ -105,14 +105,15 @@ function AgentInterface(props) {
     }
     function AddCreateEventConfirmations(events) {
         for (const event of events) {
-            setMessageList((prevItems) => [...prevItems, <CreateConfirmBox event={event} key={messageList.length}/>]);
+            let uniqueKey = Math.random().toString();
+            setMessageList((prevItems) => [...prevItems, <CreateConfirmBox event={event} id={uniqueKey}/>]);
         }
     }
-    function RemoveMessage(indexKey) {
-        let newMessageList = messageList.filter((message) => message.key != indexKey);
-        setMessageList(newMessageList);
+    function RemoveMessage(id) {
+        console.log("removing message with id: " + id);
+        setMessageList(prevMessageList => prevMessageList.filter((message) => message.props.id !== id));
     }
-    const CreateConfirmBox = ({event, key}) => {
+    const CreateConfirmBox = (confirmProps) => {
         const [pendingTitle, setPendingTitle] = useState("");
         const [pendingStartDate, setPendingStartDate] = useState("");
         const [startTime, setStartTime] = useState("");
@@ -126,6 +127,9 @@ function AgentInterface(props) {
         const startTimeRef = useRef(null);
         const endDateRef = useRef(null);
         const endTimeRef = useRef(null);
+        const confirmButtonRef = useRef(null);
+
+        const event = confirmProps.event;
         
         useEffect(()=> {
             if (event) {
@@ -151,8 +155,6 @@ function AgentInterface(props) {
                     setPendingEndDate(eventEndDate);
                     setEndTime(eventEndTime);
                 }
-                console.log("start" + startTime);
-                console.log(endTime);
 
                 descButtonRef.current.style.display = "block";
                 descRef.current.style.display = "none";
@@ -220,6 +222,8 @@ function AgentInterface(props) {
                 workingEndDate = workingStartDate;
             }
 
+            confirmButtonRef.current.disabled = true;
+            confirmButtonRef.current.textContent = "Creating Event...";
             let newEvent = await graphQLClient.graphql({
                 query: mutations.createDateEvent,
                 variables: {
@@ -232,13 +236,11 @@ function AgentInterface(props) {
                     }
                 }
             });
+            confirmButtonRef.current.textContent = "Success!";
             props.callback();
         }
-        function CancelEvent() {
-            RemoveMessage(key);
-        }
         return(
-            <div className="createConfirmBox" key={key}>
+            <div className="createConfirmBox">
                 <div className="confirmContent">
                     <h3>Title:</h3>
                     <input type="text" value={pendingTitle} onChange={(e) => setPendingTitle(e.target.value)}/>
@@ -268,8 +270,8 @@ function AgentInterface(props) {
                     }} ref={descRef}/>
                 </div>
                 <div className="buttons">
-                    <button id="confirm-button" onClick={ConfirmEvent}>Confirm</button>
-                    <button id="cancel-button" onClick={()=>{CancelEvent(key)}}>Cancel</button>
+                    <button id="confirm-button" onClick={ConfirmEvent} ref={confirmButtonRef}>Confirm</button>
+                    <button id="cancel-button" onClick={()=>RemoveMessage(confirmProps.id)}>Cancel</button>
                 </div>
             </div>
         );
@@ -278,24 +280,6 @@ function AgentInterface(props) {
 //#region graphql
 
     const graphQLClient = generateClient();
-    async function AddEvents(input) {
-        console.log("Creating event!");
-    
-        for (const event of input["events"]) {
-          let newEvent = await graphQLClient.graphql({
-            query: mutations.createDateEvent,
-            variables: {
-              input: {
-                name: event["title"],
-                startDate: event["startDate"],
-                endDate: event["endDate"],
-                username: userInfo.sub
-              }
-            }
-          });
-        }
-        // props.callback();
-    }
     
     async function ModifyEvents(input) {
     
@@ -313,7 +297,7 @@ function AgentInterface(props) {
             }
           });
         }
-        // props.callback();
+        props.callback();
     }
 //#endregion 
     async function HandleChatSubmit(event) {
@@ -354,7 +338,7 @@ function AgentInterface(props) {
                 break;
         }
 
-        let prompt = "Today's date: " + today + ", " + dayName + "\n\n a list of user's events: " + JSON.stringify(props.events) + "\n\nUser input: " + userInput;
+        let prompt = "Today's date: " + today + ", " + dayName + "\n\n a list of user's events: " + JSON.stringify(props.events) + "\n\nUser input: " + userInput + "\n\nGive the user the json response from the agent here";
 
         const payload = {
             agentId: AGENT_ID,
@@ -397,13 +381,34 @@ function AgentInterface(props) {
         setChatEnabled(true);
         setLoadingSign(false);
 
-    } //TODO lambda function to get days of week for a year
+    } 
+
+    function addNewEvent() {
+        const today = new Date();
+        const offset = today.getTimezoneOffset();
+        const localTime = new Date(today.getTime() - (offset * 60000));
+        let todayString = localTime.toISOString().split("T")[0];
+        const start = todayString + "T00:00";
+        const end = todayString + "T23:59";
+        
+        AddCreateEventConfirmations([{"title": "New Event", "startDateTime": start, "endDateTime": end}]);
+    }
     
     return(
         <div className="chatBoxContainer" style={overrideChatStyle}>
-            <h2>Nimbus Chat</h2>
+            <div className="title-area">
+                <h2>Nimbus Chat</h2>
+                <button onClick={addNewEvent}>+</button>
+            </div>
             <div className="chatBox">
-                {messageList}
+                {messageList.map((message) => {
+                    let index = messageList.indexOf(message);
+                    return (
+                        <div key={index}>
+                            {message}
+                        </div>
+                    );
+                })}
                 <img src={loadingImage} hidden={!loadingSign}/>
                 <div ref={scrollRef}/>
             </div>

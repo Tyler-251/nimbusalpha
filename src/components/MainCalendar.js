@@ -9,27 +9,16 @@ import ParseDate from '../ParseDate.js';
 import '@aws-amplify/ui-react/styles.css';
 import '../styles/MainCalendar.css';
 
-import {InvokeAgentCommand, BedrockAgentRuntimeClient} from '@aws-sdk/client-bedrock-agent-runtime';
-
-import * as mutations from '../graphql/mutations.js';
-import * as queries from '../graphql/queries.js';
-
-import caledarCore from '@fullcalendar/core';
+// import caledarCore from '@fullcalendar/core';
 import dayGrid from '@fullcalendar/daygrid';
 import FullCalendar from '@fullcalendar/react';
 
-const MODELID = 'amazon.titan-text-lite-v1';
-
 Amplify.configure(awsconfig); 
 
-function MainCalendar() {
+const MainCalendar = (props) => {
   var client = generateClient(); //API
   
   const [userInfo, setUserInfo] = useState('');
-  const [eventName, setEventName] = useState('');
-  const [eventDesc, setEventDesc] = useState('');
-  const [eventStartDate, setEventStartDate] = useState('');
-  const [eventEndDate, setEventEndDate] = useState('');
 
   const [eventList, setEventList] = useState([]);
   const [calendarEventList, setCalendarEventList] = useState([]);
@@ -53,25 +42,8 @@ function MainCalendar() {
     fetchUser();
 
     setSessionId(Math.random().toString());
-  }, []);
-
-  useEffect(() => { 
-    async function getEventList() {
-      if (!userInfo) return;
-      const allEvents = await client.graphql({
-        query: queries.listDateEvents,
-        variables: {
-          filter: {
-            username: {
-              eq: userInfo.sub
-            }
-          }
-        }
-      });
-      setEventList(allEvents.data.listDateEvents.items);
-    }
-    getEventList();
-  }, [userInfo, reset]);
+    setEventList(props.clientEvents);
+  }, [props.clientEvents]);
 
   useEffect(() => {
     let events = [];
@@ -89,7 +61,7 @@ function MainCalendar() {
       });
     });
     setCalendarEventList(events);
-    console.log("Set Calendar events");
+    //console.log(events);
   }, [eventList]);
 
 
