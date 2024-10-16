@@ -338,7 +338,7 @@ const AgentInterface = (props) => {
                 break;
         }
 
-        let prompt = "Today's date: " + today + ", " + dayName + "\n\n a list of user's events: " + JSON.stringify(props.events) + "\n\nUser input: " + userInput + "\n\nGive the user the json response from the agent here";
+        let prompt = "Today's date: " + today + ", " + dayName + "\n\n a list of user's events: " + JSON.stringify(props.events) + "\n\nUser input: " + userInput;
 
         const payload = {
             agentId: AGENT_ID,

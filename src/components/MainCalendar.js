@@ -76,14 +76,19 @@ const MainCalendar = (props) => {
         plugins={[dayGrid]}
         initialView={calendarMode}
         events={calendarEventList}
+        headerToolbar={{
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,dayGridWeek'
+        }}
         />
-      <h3>My Events:</h3>
+      {/* <h3>My Events:</h3>
       <div style={{color: "white", display: "flex", backgroundColor: "#333333", padding: "10px", width: "100%", marginBottom: "20px", flexWrap: "wrap", justifyContent: "center"}}>
         {
           eventList.map((event) => {
             return (<EventBox event={event} key={event.id} onDelete={()=>{setReset(!reset);}}/>);
         })}
-      </div>
+      </div> */}
     </div>
   );
 }
