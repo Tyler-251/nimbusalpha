@@ -280,3 +280,128 @@
     transform: translate(10px, 30px);
     transition: .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
+
+
+
+
+
+
+
+
+
+
+
+/* createconfirmtab */
+.confirmCreateTab {
+    background-color: rgb(255, 211, 129);
+    padding: 10px;
+    margin: 10px;
+}
+
+.confirmCreateTab h1 {
+    margin: auto;
+    font-weight: 800;
+    font-size: 20px;
+    color: rgb(255, 255, 255);
+}
+
+.confirmCreateTab .dateDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: rgb(255, 197, 91);
+}
+
+.confirmCreateTab .dateDiv h2 {
+    margin: auto;
+    font-weight: 500;
+    font-size: 15px;
+    color: rgb(255, 255, 255);
+}
+
+.confirmCreateTab .dateDiv p {
+    margin: auto;
+    font-weight: 500;
+    font-size: 15px;
+    color: rgb(255, 255, 255);
+}
+
+.confirmCreateTab .buttons {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+
+
+
+
+
+
+
+/* deleteconfirmtab */
+
+.confirmDeleteTab {
+    background-color: rgb(255, 211, 129);
+    padding: 10px;
+    margin: 10px;
+}
+
+.confirmDeleteTab h1 {
+    margin: auto;
+    font-weight: 800;
+    font-size: 20px;
+    color: rgb(255, 255, 255);
+}
+
+.confirmDeleteTab .buttons {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+
+/* #region .confirmModifyTab */
+
+.confirmModifyTab {
+    background-color: rgb(255, 211, 129);
+    padding: 10px;
+    margin: 10px;
+}
+
+.confirmModifyTab h1 {
+    margin: auto;
+    font-weight: 800;
+    font-size: 20px;
+    color: rgb(255, 255, 255);
+}
+
+.confirmModifyTab h2 {
+    margin: auto;
+    font-weight: 500;
+    font-size: 15px;
+    color: rgb(212, 78, 0);
+}
+
+.confirmModifyTab .buttons {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.buttons button {
+    background-color: orange;
+    color: white;
+    font-weight: 700;
+    border: none;
+}
+
+.buttons button:hover {
+    background-color: rgb(255, 123, 0);
+}
+
+.buttons button:last-child{
+    background-color: white;
+    color: rgb(190, 190, 190);
+}
+
+.buttons button:last-child:hover {
+    background-color: rgb(241, 241, 241);
+}

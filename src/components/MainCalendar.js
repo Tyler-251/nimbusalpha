@@ -12,6 +12,7 @@ import '../styles/MainCalendar.css';
 // import caledarCore from '@fullcalendar/core';
 import dayGrid from '@fullcalendar/daygrid';
 import FullCalendar from '@fullcalendar/react';
+import timeGridPlugin from '@fullcalendar/timegrid';
 
 Amplify.configure(awsconfig); 
 
@@ -48,17 +49,21 @@ const MainCalendar = (props) => {
   useEffect(() => {
     let events = [];
     eventList.map((event) => {
-      let start = ParseDate(event.startDateTime);
-      let end = ParseDate(event.endDateTime);
-      let allDay = start.getHours() === 0 && start.getMinutes() === 0 && end.getHours() === 23 && end.getMinutes() === 59;
-      events.push({
-        start: start,
-        end: end,
-        title: event.name,
-        allDay: allDay,
-        id: event.id,
-        key: event.id
-      });
+      try {
+        let start = ParseDate(event.startDateTime);
+        let end = ParseDate(event.endDateTime);
+        let allDay = start.getHours() === 0 && start.getMinutes() === 0 && end.getHours() === 23 && end.getMinutes() === 59;
+        events.push({
+          start: start,
+          end: end,
+          title: event.name,
+          allDay: allDay,
+          id: event.id,
+          key: event.id
+        });
+      } catch (error) {
+        console.error('Error parsing event:', error);
+      }
     });
     setCalendarEventList(events);
     //console.log(events);
@@ -73,13 +78,13 @@ const MainCalendar = (props) => {
   return (
     <div className='calendar-body'>
       <FullCalendar 
-        plugins={[dayGrid]}
+        plugins={[dayGrid, timeGridPlugin]}
         initialView={calendarMode}
         events={calendarEventList}
         headerToolbar={{
           left: 'prev,next today',
           center: 'title',
-          right: 'dayGridMonth,dayGridWeek'
+          right: 'dayGridMonth,timeGridWeek'
         }}
         />
       {/* <h3>My Events:</h3>
