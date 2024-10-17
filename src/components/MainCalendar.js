@@ -16,21 +16,55 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 
 Amplify.configure(awsconfig); 
 
+function DateToString(input) {
+  let date = input.split('T')[0];
+  let time = input.split('T')[1].split('.')[0];
+  time = time.slice(0, -1);
+  return date + ' ' + time;
+}
+
+
 const MainCalendar = (props) => {
   var client = generateClient(); //API
   
   const [userInfo, setUserInfo] = useState('');
-
+  
   const [eventList, setEventList] = useState([]);
   const [calendarEventList, setCalendarEventList] = useState([]);
-  const [calendarMode, setCalendarMode] = useState('dayGridMonth');
-
-  const [prompt, setPrompt] = useState('');
-  const [response, setResponse] = useState('<Response>');
-  const [sessionId, setSessionId] = useState('');
-
-  const [reset, setReset] = useState(true); //used to reset states dependent upon reset (ie calendar events, etc)
   
+  const [popUpDiv, setPopUpDiv] = useState(<></>);
+  
+  const PopUp = (popProps) => {
+    const id = popProps.event.id;
+    let listedEvent = eventList.find((event) => event.id === id);
+
+    const description = listedEvent.desc;
+    let descDiv = <></>;
+    if (description) {
+      descDiv = <textarea readOnly="true">{description}</textarea>;
+    }
+
+    const startDateString = DateToString(listedEvent.startDateTime);
+    const endDateString = DateToString(listedEvent.endDateTime);
+
+    const leftStyle = {
+      "transform": "translate(0, 0)",
+    }
+
+    return (
+      <div className="popup" style={leftStyle}>
+        <button onClick={()=>setPopUpDiv(<></>)}></button>
+        <h1>{listedEvent.name}</h1>
+        <div className='dates'>
+          <p>{startDateString}</p>
+          <p> to </p>
+          <p>{endDateString}</p>
+        </div>
+        {descDiv}
+      </div>
+    );
+  }
+
   useEffect(() => {  // ON MOUNT
     const fetchUser = async () => {
       try {
@@ -41,8 +75,6 @@ const MainCalendar = (props) => {
       }
     }
     fetchUser();
-
-    setSessionId(Math.random().toString());
     setEventList(props.clientEvents);
   }, [props.clientEvents]);
 
@@ -59,7 +91,8 @@ const MainCalendar = (props) => {
           title: event.name,
           allDay: allDay,
           id: event.id,
-          key: event.id
+          key: event.id,
+          color: "orangered"
         });
       } catch (error) {
         console.error('Error parsing event:', error);
@@ -76,25 +109,25 @@ const MainCalendar = (props) => {
 
 
   return (
-    <div className='calendar-body'>
-      <FullCalendar 
-        plugins={[dayGrid, timeGridPlugin]}
-        initialView={calendarMode}
-        events={calendarEventList}
-        headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek'
-        }}
-        />
-      {/* <h3>My Events:</h3>
-      <div style={{color: "white", display: "flex", backgroundColor: "#333333", padding: "10px", width: "100%", marginBottom: "20px", flexWrap: "wrap", justifyContent: "center"}}>
-        {
-          eventList.map((event) => {
-            return (<EventBox event={event} key={event.id} onDelete={()=>{setReset(!reset);}}/>);
-        })}
-      </div> */}
-    </div>
+    <>
+      <div className='calendar-body'>
+        <FullCalendar 
+          plugins={[dayGrid, timeGridPlugin]}
+          initialView='dayGridMonth'
+          events={calendarEventList}
+          headerToolbar={{
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek'
+          }}
+          eventClick={(info) => {
+            console.log(info);
+            setPopUpDiv(<PopUp event={info.event}/>);
+          }}
+          />
+      </div>
+      {popUpDiv}  
+    </>
   );
 }
 
