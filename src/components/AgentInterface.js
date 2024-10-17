@@ -353,7 +353,7 @@ const AgentInterface = (props) => {
         <div className="chatBoxContainer">
             <div className="title-area">
                 <h2>Nimbus Chat</h2>
-                <button onClick={addNewEvent}>+</button>
+                {/* <button onClick={addNewEvent}>+</button> */}
             </div>
             <div className="chatBox">
                 {messageList.map((message) => {

@@ -131,4 +131,4 @@ const MainCalendar = (props) => {
   );
 }
 
-export default withAuthenticator(MainCalendar);
+export default MainCalendar;
